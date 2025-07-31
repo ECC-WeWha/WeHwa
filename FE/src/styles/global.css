@@ -1,0 +1,33 @@
+/* global.css */
+.main-title-link {
+    text-decoration: none;
+    color: #00664F;
+    text-align: center;
+    width: 284px;
+    height: 22px;
+    top: 75px;
+    left: 597px;
+}
+
+.main-title-link {
+    font-family: Inter;
+    font-weight: 500;
+    font-style: Medium;
+    font-size: 18px;
+    line-height: 100%;
+    letter-spacing: 0%;
+}
+
+.app-wrapper {
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+.main-menubar{
+    width: 70;
+    height: 1440;
+    rotate: 90 deg;
+    opacity: 1;
+}
