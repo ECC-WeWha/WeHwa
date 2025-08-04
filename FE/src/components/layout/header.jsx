@@ -21,8 +21,45 @@ function Header() {
   };
 
   return (
-    <header className="header-bar">
-      <div style={{marginTop:"-10px"}}><img src={languageImage} alt="로고" className="lang-image"></img></div>
+  <header className="header-bar"> 
+  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginLeft:"24px",marginTop:"6px",marginRight:"50px" }}>
+    <div>
+    <img src={languageImage} alt="로고" className="lang-image"></img>
+    </div>
+
+    <div style={{ textAlign: "center" }}>
+      <Link to="/" className="logo-link">
+        <img src={logoImage} alt="로고" className="logo-image" style={{marginTop:"-20px"}}/>
+        <div className="logo-text">이대생을 위한 외국인 유학생 커뮤니티</div>
+      </Link>
+    </div>
+    
+    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div className="main-button" onClick={handleLoginBoxClick}>
+          {isLoggedIn ? "로그아웃" : "로그인"}
+        </div>
+        <img src={profileImage} alt="로고" className="profile-image" />
+        {isLoggedIn && (
+          <div className="user-id">아이디나오게</div> )}
+        <img src={alarmImge} alt="로고" className="alarm-image"/>
+    </div>
+
+  </div>        
+</header>
+
+
+  );
+}
+
+export default Header;
+
+
+
+
+
+{/*
+
+<div style={{marginTop:"-10px"}}><img src={languageImage} alt="로고" className="lang-image"></img></div>
       <div>
         <Link to="/" className="logo-link">
           <img src={logoImage} alt="로고" className="logo-image" style={{marginTop:"-30px"}}/>
@@ -36,15 +73,8 @@ function Header() {
         </div>
         <img src={profileImage} alt="로고" className="profile-image" style={{marginTop:"-10px"}}/>
         {isLoggedIn && (
-          <div className="user-id">id12345</div> )}
+          <div className="user-id">아이디나오게</div> )}
         <img src={alarmImge} alt="로고" className="alarm-image" style={{marginTop:"-10px"}}/>
       </div>
-    </header>
-  );
-}
 
-export default Header;
-
-
-
-
+*/}

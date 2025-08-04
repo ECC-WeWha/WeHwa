@@ -5,7 +5,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
 import HomePage from "../pages/home-page";
 import LoginPage from '../pages/login-page';
-//import SignupPage from '../pages/signup-page';
+import SignupPage from '../pages/signup-page';
 //import BoardPage from "../pages/board-page";
 //import FriendListPage from '../pages/friend-list-page';
 //import FriendFindPage from '../pages/friend-find-page';
@@ -17,8 +17,8 @@ export const router = createBrowserRouter([
     children: [
       { path: "", element: <HomePage /> },
       { path: "login", element: <LoginPage /> },    
-      {/* {path: "signup", element: <SignupPage /> },   
-      { path: "board", element: <BoardPage /> },
+      {path: "signup", element: <SignupPage /> },   
+      {/*{ path: "board", element: <BoardPage /> },
       { path: "friends-list", element: <FriendListPage /> },
       { path: "friends-find", element: <FriendFindPage /> },  //일단 각 페이지별로 하나씩은 */}
     ],
