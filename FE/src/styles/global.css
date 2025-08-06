@@ -27,7 +27,7 @@
 .logo-text {
     margin-top: -5px; /* 살짝 겹치지 않게 */
     font-size: 16px;
-    font-family: Inter;
+    font-family:'IBM Plex Sans KR', sans-serif;
     font-weight: 500;
     font-style: Medium;
     font-size: 18px;
@@ -45,7 +45,7 @@
     height: 50px;
     border-radius: 26px;
     border: 1px solid #00664F;
-    font-family: Inter;
+    font-family: 'IBM Plex Sans KR', sans-serif;
     font-size: 18px;
     color: black;
     background: white;
@@ -62,7 +62,7 @@
 }
 
 .user-id {
-    font-family: Inter;
+    font-family: 'IBM Plex Sans KR', sans-serif;
     font-weight: 500;
     font-style: Medium;
     font-size: 18px;
@@ -70,4 +70,8 @@
     color: #00664F;
     letter-spacing: 0%;
 
+}
+
+body {
+    font-family: 'IBM Plex Sans KR', sans-serif;
 }

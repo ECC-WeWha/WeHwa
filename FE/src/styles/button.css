@@ -12,7 +12,7 @@
 
 }
 .green-button-text {
-    font-family: Inter;
+    font-family: 'IBM Plex Sans KR', sans-serif;
     font-weight: 600;
     font-size: 20px;
     color: white;
@@ -25,6 +25,10 @@
     border-radius: 26px;
     border-width: 1px;
     border: 1px solid #005A44;
+    font-size: 20px;
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    letter-spacing: 1px;
+    text-indent: 6px
 }
 .input-box::placeholder {
     color: #aaa;
@@ -33,7 +37,7 @@
 }
 
 .label-title {
-    font-family: Inter;
+    font-family: 'IBM Plex Sans KR', sans-serif;
     font-weight: 600;
     font-size: 32px;
     line-height: 100%;
@@ -42,7 +46,7 @@
     margin-bottom: 8px;
 }
 .signup-text{
-    font-family: Inter;
+    font-family: 'IBM Plex Sans KR', sans-serif;
     font-weight: 600; 
     font-size: 20px;
     line-height: 100%;

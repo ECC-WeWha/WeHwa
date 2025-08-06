@@ -9,6 +9,8 @@ import SignupPage from '../pages/signup-page';
 //import BoardPage from "../pages/board-page";
 //import FriendListPage from '../pages/friend-list-page';
 //import FriendFindPage from '../pages/friend-find-page';
+import KakaoRedirection from "../components/user/KakaoRedirection";
+
 
 export const router = createBrowserRouter([
   {
@@ -20,7 +22,8 @@ export const router = createBrowserRouter([
       {path: "signup", element: <SignupPage /> },   
       {/*{ path: "board", element: <BoardPage /> },
       { path: "friends-list", element: <FriendListPage /> },
-      { path: "friends-find", element: <FriendFindPage /> },  //일단 각 페이지별로 하나씩은 */}
+      { path: "friends-find", element: <FriendFindPage /> },  //일단 각 페이지별로 하나씩은 */},
+      {path:"/kakao/callback",element:< KakaoRedirection/>},
     ],
   },
 ]);
@@ -28,3 +31,5 @@ export const router = createBrowserRouter([
 
 
 export default router;
+
+

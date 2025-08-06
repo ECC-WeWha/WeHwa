@@ -1,6 +1,6 @@
 // src/components/layout/header.jsx
 
-import React, { useState } from "react";  //로그인 로그아웃 상태를 위해
+import React, { useState, useEffect} from "react";  //로그인 로그아웃 상태를 위해
 import { Link, useNavigate } from "react-router-dom";
 import logoImage from "../../assets/images/logo.png";
 import languageImage from "../../assets/images/lang.png";
@@ -9,16 +9,30 @@ import profileImage from "../../assets/images/profile.png";
 
 function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState(""); //이것도 백엔드랑 이름 바뀌면 바뀌는거여
   const navigate = useNavigate();
+  //로그인 상태 확인용 -> 그래야 바뀌지  //+지금 당장은 확인 불가능
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      const savedId = localStorage.getItem("userId");
+      if (token) {
+        setIsLoggedIn(true);
+        setUserId(savedId);
+      }
+    }, []);
 
   const handleLoginBoxClick = () => {
     if (isLoggedIn) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
       setIsLoggedIn(false);
+      setUserId("");
       alert("로그아웃되었습니다."); //확인용 팝업 - 추가로 만들기
     } else {
       navigate("/login");
     }
   };
+  
 
   return (
   <header className="header-bar"> 
@@ -40,7 +54,7 @@ function Header() {
         </div>
         <img src={profileImage} alt="로고" className="profile-image" />
         {isLoggedIn && (
-          <div className="user-id">아이디나오게</div> )}
+          <div className="user-id">{userId}</div> )}
         <img src={alarmImge} alt="로고" className="alarm-image"/>
     </div>
 
@@ -52,29 +66,3 @@ function Header() {
 }
 
 export default Header;
-
-
-
-
-
-{/*
-
-<div style={{marginTop:"-10px"}}><img src={languageImage} alt="로고" className="lang-image"></img></div>
-      <div>
-        <Link to="/" className="logo-link">
-          <img src={logoImage} alt="로고" className="logo-image" style={{marginTop:"-30px"}}/>
-          <div className="logo-text">이대생을 위한 외국인 유학생 커뮤니티</div>
-        </Link>
-      </div>
-
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        <div className="main-button" onClick={handleLoginBoxClick}>
-          {isLoggedIn ? "로그아웃" : "로그인"}
-        </div>
-        <img src={profileImage} alt="로고" className="profile-image" style={{marginTop:"-10px"}}/>
-        {isLoggedIn && (
-          <div className="user-id">아이디나오게</div> )}
-        <img src={alarmImge} alt="로고" className="alarm-image" style={{marginTop:"-10px"}}/>
-      </div>
-
-*/}
