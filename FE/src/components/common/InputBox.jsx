@@ -7,13 +7,15 @@ function InputBox({
   placeholder,
   value,
   onChange,
+  checked,
   options,
   min,
   max,
   step,
-  defaultValue
+  defaultValue,
+  style,
 }) {
-  if (type === "select" && options) {
+  if (type === "select" && options) { //일단 select는 안꾸미는걸로 
     return (
       <select
         className="input-box"
@@ -30,6 +32,24 @@ function InputBox({
       </select>
     );
   }
+  if (type === "radio" && options) {
+    return (
+      <div style={{ display: "flex", gap: "45px" }}>
+        {options.map((opt) => (
+          <label key={opt.value} style={{ display: "flex", alignItems: "center" }}>
+            <input
+              type="radio"
+              name={name}
+              value={opt.value}
+              checked={value === opt.value}
+              onChange={onChange}
+            />
+            <span className="green-text-28px">{opt.label}</span>
+          </label>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <input
@@ -43,6 +63,7 @@ function InputBox({
       min={min}
       max={max}
       step={step}
+      style={style} 
     />
   );
 }

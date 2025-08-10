@@ -16,13 +16,13 @@ function SignupPage() {
     userId: "",
     password: "",
     passwordCheck: "",
-  nickname: "",
-  username: "",
-  email: "",
-  nationality: "",
-  studentStatus: "",
-  grade: "",
-  birthYear: "",
+    nickname: "",
+    username: "",
+    email: "",
+    nationality: "",
+    studentStatus: "",
+    grade: "",
+    birthYear: "",
   });
 
   const handleChange = (e) => {
@@ -50,7 +50,7 @@ function SignupPage() {
           alignItems: "center",         // 가로 가운데
           minHeight: "100vh",
       }}>
-        <div className="signup-title" style={{marginTop:"100px", marginBottom:"45px"}}>회원가입</div>
+        <div className="signup-title" style={{marginTop:"100px", marginBottom:"50px"}}>회원가입</div>
 
         <div style={{ display: "flex",gap: "45px",flexDirection: "column",width: "100%" }}>
           {step === 1 && <Step1Form formData={formData} onChange={handleChange} nextStep={nextStep}/>}
