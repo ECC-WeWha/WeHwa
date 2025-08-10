@@ -1,0 +1,69 @@
+
+/*초록 버튼 관련 css */
+.green-button {
+    width: 170px;
+    height: 70px;
+    opacity: 0.9;
+    border-radius: 26px;
+    border-width: 1px;
+    background: #014B3A;
+    margin: 0 auto;
+    display : block;
+
+}
+.green-button-text {
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    color: white;
+}
+
+.input-box {
+    width: 430px;
+    height: 74px;
+    opacity: 1;
+    border-radius: 26px;
+    border-width: 1px;
+    border: 1px solid #005A44;
+    font-size: 20px;
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    letter-spacing: 1px;
+    text-indent: 6px
+}
+.input-box::placeholder {
+    color: #aaa;
+    font-size: 28px;
+    opacity: 1;
+}
+
+.label-title {
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #014B3A;
+    margin-bottom: 8px;
+}
+.signup-text{
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    font-weight: 600; 
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #45A2BC;
+    text-align: center;
+    text-decoration: none;
+
+}
+
+.use-login-image {
+    width: 86px;
+    height: 86px;
+    opacity: 1;
+    border-width: 1px;
+    border-radius: 50%; 
+    object-fit: cover;      
+    overflow: hidden;
+    border: 1px solid #000000;
+}

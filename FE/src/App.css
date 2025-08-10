@@ -40,3 +40,14 @@
 .read-the-docs {
   color: #888;
 }
+
+@font-face {
+  font-family: 'IBM Plex Sans KR';
+  src: url('./assets/fonts/ibm-plex-sans-kr-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  font-family: 'IBM Plex Sans KR', sans-serif;
+}

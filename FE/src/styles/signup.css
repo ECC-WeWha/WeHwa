@@ -1,0 +1,107 @@
+.signup-title {
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    font-weight: 600;
+    font-size: 48px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #014B3A;
+    margin-bottom: 8px;
+}
+
+.signup-horizontal-div {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;  
+    width: 100%; 
+}
+.signup-div-more {
+    flex: 0 0 30%;
+    display: flex;
+    align-items :center;
+    gap: 4px;
+}
+
+
+.signup-three {
+    display: flex;
+    gap: 12px;          
+    flex-wrap: wrap;
+    width: 988px;
+    height: 74px;
+    align-items: center;
+}
+.three {
+    flex: 1 1 0;        /* 남는 공간 균등 분배 */
+    display: flex;
+    align-items: center;
+}
+.left   { justify-content: flex-start; }
+.center { justify-content: center; margin-left: -50px;}
+.right  { justify-content: flex-end; }
+
+
+.three.center input[type="radio"] {
+    margin-right: 25px;
+}
+.three.center label {
+    margin-right: 45px; /* 선택지 사이 간격 (기본보다 넓게) */
+}
+.signup-green-text {
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 100%;
+    color: #014B3A;
+}
+.signup-need-text {
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 100%;
+    color: #ff0000;
+}
+
+
+.green-text-28px{
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    font-size: 28px;
+    line-height: 100%;
+    color: #014B3A;
+}
+.green-text-24px{
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    font-size: 24px;
+    line-height: 100%;
+    color: #014B3A;
+}
+.red-text-20px{
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    font-size: 20px;
+    line-height: 100%;
+    color: #C71515;
+}
+.lightgreen-text-20px{
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    font-size: 20px;
+    line-height: 100%;
+    color: #2D862A;
+}
+
+
+
+.custom-checkbox {
+    appearance: none;
+    width: 58px;
+    height: 58px;
+    border: 1px solid #014B3A;
+    border-radius: 26px;
+    background-color: white;
+    position: relative;
+}
+
+.custom-checkbox:checked {
+    background-color: #ffffff;
+    border:  1px solid #014B3A;
+    border-style: double;
+    border-width: 20px;
+}
