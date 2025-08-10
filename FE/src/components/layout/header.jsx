@@ -17,7 +17,7 @@ function Header() {
       const savedId = localStorage.getItem("userId");
       if (token) {
         setIsLoggedIn(true);
-        setUserId(savedId);
+        setUserId(savedId || "");
       }
     }, []);
 

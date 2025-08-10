@@ -11,15 +11,20 @@ function KakaoRedirection() {
     const BACKEND_URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
     axios
-      .post(`${BACKEND_URL}kakaoLogin`, { code }) // ← 백엔드에 인가 코드 보내기  //이떄 kakaologin이 실제 api위치와 같아야 한다
+      .post(`${BACKEND_URL}kakaoLogin`,{
+        authorizationCode: code,
+        redirectUri: import.meta.env.VITE_REACT_APP_REDIRECT_URI
+        }) // ← 백엔드에 인가 코드 보내기  //이떄 kakaologin이 실제 api위치와 같아야 한다
       .then((res) => {
-        const { token, user_name } = res.data;
+        const { token, userId } = res.data;
         localStorage.setItem("token", token);
-        localStorage.setItem("name", user_name);
-        navigate("/login"); //로그인 성공후 갈 페이지 -- main으로 가는게 좋은지 아닌지
+        localStorage.setItem("userId", userId);
+        navigate("/"); //main으로 가게 수정-> 바로 로그인 가능하게
       })
       .catch((err) => {
         console.error("카카오 로그인 실패", err);
+        alert("카카오 로그인 중 오류가 발생했습니다."); //없으니 로그인 페이지로
+        navigate("/login");
       });
   }, []);
 
