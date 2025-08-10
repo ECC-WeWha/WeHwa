@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Outlet } from "react-router-dom"; //이건뭐야
-import Header from "./components/layout/header";  //이거 headar의 함수 쓴다는거야?
+import Header from "./components/layout/header.jsx";  //이거 headar의 함수 쓴다는거야?
 
 function App() {
   return (
