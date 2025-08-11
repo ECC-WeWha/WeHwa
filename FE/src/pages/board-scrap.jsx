@@ -1,4 +1,3 @@
-// BoardPage.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import BoardNav from "../components/top-nav/top-nav.jsx";
@@ -22,8 +21,18 @@ const posts = [
   {
     id: "456",
     username: "user123",
-    title: "A Taste of Thailand in the Heart of Seoul: Uraproud Review",
-    description: "Living in Seoul doesn’t mean you have to leave the flavors of Thailand behind. In fact, tucked between the buzzing streets of the city are gems that will instantly transport you to Bangkok with just one bite. One of my absolute favorites is [Restaurant Name], a cozy spot that serves up authentic Thai flavors with the kind of warmth that feels like home.",
+    title: "다른 포스트 예시 제목",
+    description: "설명 내용",
+    likes: 5,
+    comments: 2,
+    time: "10분 전",
+    body: "본문 예시 입니다.",
+  },
+  {
+    id: "43043",
+    username: "nalin",
+    title: "다른 포스트 예시 제목",
+    description: "설명 내용",
     likes: 5,
     comments: 2,
     time: "10분 전",
@@ -47,7 +56,7 @@ function BoardPage() {
         <main style={{ flex: 1, padding: "0 80px" }}>
           <div style={{ display: "flex", alignItems: "flex-start", marginBottom: "16px", position: "relative" }}>
             <h2 style={{ fontSize: 40, fontWeight: "bold", color: green, margin: 0, position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
-              내가 쓴 글
+              나의 스크랩
             </h2>
           </div>
 

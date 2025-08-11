@@ -16,6 +16,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 
+
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -532,9 +533,29 @@ function BoardWrite() {
                 }}
               />
 
-              {/* 본문 */}
+              {/* 본문 : body */}
               <label style={{ fontWeight: 600, color: green, fontSize: "20px" }}>
                 본문 <span style={{ color: "red", fontSize: "10px", verticalAlign: "middle" }}>●</span>
+              </label>
+              <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                rows={8}
+                required
+                style={{
+                  width: "100%",
+                  padding: "20px",
+                  border: `1.5px solid ${green}`,
+                  borderRadius: "20px",
+                  outline: "none",
+                  resize: "vertical",
+                }}
+              />
+
+
+              {/* 본문 요약 : description*/} 
+              <label style={{ fontWeight: 600, color: green, fontSize: "20px" }}>
+                본문 요약 <span style={{ color: "red", fontSize: "10px", verticalAlign: "middle" }}>●</span>
               </label>
               <textarea
                 value={content}

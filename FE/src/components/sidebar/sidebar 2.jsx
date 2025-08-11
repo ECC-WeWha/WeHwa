@@ -7,7 +7,7 @@ function BoardSidebar() {
   const menuItems = [
     { label: "게시판 홈", path: "/board" },
     { label: "글쓰기", path: "/board/write" },
-    { label: "내가 쓴 글", path: "/board/mypage" },
+    { label: "내가 쓴 글", path: "/board/my-posts" },
     { label: "스크랩", path: "/board/scrap" },
   ];
 
@@ -29,7 +29,7 @@ function BoardSidebar() {
       {menuItems.map(({ label, path }) => (
         <Link
           key={label}
-          to={path}                              
+          to={path}                              // ✅ navigates via router
           aria-current={isActive(path) ? "page" : undefined}
           style={{
             display: "block",

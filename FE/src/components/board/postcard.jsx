@@ -7,13 +7,13 @@ function PostCard({
   likes,
   comments,
   time,
-  onClick, // pass from parent
+  onClick, 
 }) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
 
   const toggleLike = (e) => {
-    e.stopPropagation(); // prevent card navigation when clicking heart
+    e.stopPropagation(); 
     setLikeCount((c) => (liked ? c - 1 : c + 1));
     setLiked((v) => !v);
   };
@@ -29,7 +29,7 @@ function PostCard({
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        cursor: "pointer", // 👈 pointer cursor on hover
+        cursor: "pointer",
         userSelect: "none",
       }}
       role={onClick ? "button" : undefined}
