@@ -16,7 +16,6 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 
-
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
   clipPath: "inset(50%)",
@@ -34,7 +33,6 @@ const withPreviewUrl = (file) => {
   return Object.assign(file, { previewUrl });
 };
 
-
 function ImageAdder({
   value = [],
   onChange,
@@ -47,8 +45,11 @@ function ImageAdder({
   const [error, setError] = useState("");
 
   useEffect(() => setFiles(value), [value]);
+
+  // revoke previews on unmount
   useEffect(() => {
     return () => files.forEach((f) => f.previewUrl && URL.revokeObjectURL(f.previewUrl));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const pushFiles = (incomingList) => {
@@ -153,60 +154,60 @@ function ImageAdder({
 }
 
 function RadioOption({ id, label, value, checked, onChange, color = "#00664F", name, required }) {
-    const size = 26;
-    const borderWidth = 2;
-    const innerSize = size / 2;
-  
-    return (
-      <label htmlFor={id} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
-        <input
-          id={id}
-          type="radio"
-          name={name}
-          value={value}
-          checked={checked}
-          onChange={onChange}
-          required={required}
-          style={{
-            position: "absolute",
-            opacity: 0,
-            pointerEvents: "none",
-            width: 0,
-            height: 0,
-          }}
-        />
-        <span
-          aria-hidden="true"
-          style={{
-            position: "relative",
-            width: size,
-            height: size,
-            borderRadius: "50%",
-            border: `${borderWidth}px solid ${color}`,
-            background: checked ? color : "transparent",
-            transition: "background 150ms ease, box-shadow 150ms ease",
-          }}
-        >
-          {checked && (
-            <span
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                width: innerSize,
-                height: innerSize,
-                background: "#fff",
-                borderRadius: "50%",
-                transform: "translate(-50%, -50%)",
-              }}
-            />
-          )}
-        </span>
-        <span style={{ fontSize: 18 }}>{label}</span>
-      </label>
-    );
-  }
-  
+  const size = 26;
+  const borderWidth = 2;
+  const innerSize = size / 2;
+
+  return (
+    <label htmlFor={id} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
+      <input
+        id={id}
+        type="radio"
+        name={name}
+        value={value}
+        checked={checked}
+        onChange={onChange}
+        required={required}
+        style={{
+          position: "absolute",
+          opacity: 0,
+          pointerEvents: "none",
+          width: 0,
+          height: 0,
+        }}
+      />
+      <span
+        aria-hidden="true"
+        style={{
+          position: "relative",
+          width: size,
+          height: size,
+          borderRadius: "50%",
+          border: `${borderWidth}px solid ${color}`,
+          background: checked ? color : "transparent",
+          transition: "background 150ms ease, box-shadow 150ms ease",
+        }}
+      >
+        {checked && (
+          <span
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              width: innerSize,
+              height: innerSize,
+              background: "#fff",
+              borderRadius: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+          />
+        )}
+      </span>
+      <span style={{ fontSize: 18 }}>{label}</span>
+    </label>
+  );
+}
+
 const COUNTRIES_KO_EN = [
   { ko: "대한민국", en: "South Korea" },
   { ko: "일본", en: "Japan" },
@@ -386,7 +387,6 @@ const COUNTRIES_KO_EN = [
   { ko: "상투메프린시페", en: "São Tomé and Príncipe" },
 ];
 
-
 function BoardCategorySelect({ options = [], value, onChange, disabled }) {
   return (
     <Box sx={{ minWidth: 120 }}>
@@ -399,7 +399,11 @@ function BoardCategorySelect({ options = [], value, onChange, disabled }) {
           required
           disabled={disabled}
           inputProps={{ name: "boardCategory" }}
+          displayEmpty
         >
+          <MenuItem value="" disabled>
+            카테고리를 선택하세요
+          </MenuItem>
           {options.map((opt) => (
             <MenuItem key={opt.value} value={opt.value}>
               {opt.label}
@@ -414,11 +418,11 @@ function BoardCategorySelect({ options = [], value, onChange, disabled }) {
 function BoardWrite() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [description, setDescription] = useState(""); // <-- added
   const [authorType, setAuthorType] = useState("id");
   const [keywordInput, setKeywordInput] = useState("");
   const [keywords, setKeywords] = useState(["일본 유학생", "일식 맛집"]);
   const [images, setImages] = useState([]);
-
 
   const [categoryType, setCategoryType] = useState("");
   const [category, setCategory] = useState("");
@@ -432,7 +436,6 @@ function BoardWrite() {
     { value: "맛집게시판", label: "맛집 게시판" },
     { value: "국적게시판", label: "국적 게시판" },
   ];
-
 
   const nationalOptions = COUNTRIES_KO_EN.map(({ ko, en }) => ({
     value: ko,
@@ -477,6 +480,7 @@ function BoardWrite() {
     const form = new FormData();
     form.append("title", title);
     form.append("content", content);
+    form.append("description", description);
     form.append("authorType", authorType);
     form.append("boardCategoryType", categoryType);
     form.append("boardCategory", category); // value is KO name
@@ -486,6 +490,7 @@ function BoardWrite() {
     console.log({
       title,
       content,
+      description,
       authorType,
       categoryType,
       category,
@@ -552,14 +557,13 @@ function BoardWrite() {
                 }}
               />
 
-
-              {/* 본문 요약 : description*/} 
+              {/* 본문 요약 : description */}
               <label style={{ fontWeight: 600, color: green, fontSize: "20px" }}>
                 본문 요약 <span style={{ color: "red", fontSize: "10px", verticalAlign: "middle" }}>●</span>
               </label>
               <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 rows={8}
                 required
                 style={{
@@ -569,6 +573,7 @@ function BoardWrite() {
                   borderRadius: "20px",
                   outline: "none",
                   resize: "vertical",
+                  fontFamily: "'IBM Plex Sans KR', sans-serif",
                 }}
               />
 
