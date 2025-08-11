@@ -2,7 +2,59 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import BoardNav from "../components/top-nav/top-nav.jsx";
 import BoardSidebar from "../components/sidebar/sidebar.jsx";
-import PostCard from "../components/board/PostCard.jsx";
+
+const green = "#00664F";
+const softGreen = "#66A395";
+const border = "#B4B4B4";
+const gray = "#888";
+
+
+function PostCard({ username, title, description, likes, comments, time, onClick }) {
+  return (
+    <article
+      onClick={onClick}
+      style={{
+        border: `1px solid ${border}`,
+        borderRadius: 16,
+        padding: 20,
+        marginBottom: 16,
+        cursor: "pointer",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: "50%",
+            background: "#E9E9E9",
+          }}
+        />
+        <span style={{ fontSize: 14, color: "#1a1a1a" }}>{username}</span>
+      </div>
+
+      <h3
+        style={{
+          margin: "10px 0 6px",
+          color: green,
+          fontSize: 18,
+          fontWeight: 700,
+          lineHeight: 1.6,
+        }}
+      >
+        {title}
+      </h3>
+
+      <p style={{ margin: 0, color: "#333", fontSize: 16 }}>{description}</p>
+
+      <div style={{ marginTop: 10, display: "flex", gap: 16, color: gray, fontSize: 14 }}>
+        <span>❤️ {likes}</span>
+        <span>💬 {comments}</span>
+        <span>· {time}</span>
+      </div>
+    </article>
+  );
+}
 
 function BoardPage() {
   const navigate = useNavigate();
@@ -39,7 +91,7 @@ function BoardPage() {
               style={{
                 fontSize: "40px",
                 fontWeight: "bold",
-                color: "#00664F",
+                color: green,
                 margin: 0,
                 position: "absolute",
                 left: "50%",
@@ -50,7 +102,7 @@ function BoardPage() {
             </h2>
           </div>
 
-          {/* Search bar (between title and tabs, aligned right) */}
+          {/* Search */}
           <div
             style={{
               display: "flex",
@@ -64,10 +116,12 @@ function BoardPage() {
               placeholder="검색"
               style={{
                 padding: "15px 20px",
-                border: "1px solid #66A395",
+                border: `1px solid ${softGreen}`,
                 borderRadius: "20px",
                 width: "240px",
                 fontSize: "20px",
+                fontFamily: "inherit",
+                outline: "none",
               }}
             />
           </div>
@@ -88,6 +142,7 @@ function BoardPage() {
             <span style={{ color: "#888", cursor: "pointer" }}>스크랩 많은 글</span>
           </div>
 
+          {/* Posts */}
           <PostCard
             username="heejin0316"
             title="생방송투데이 강서구 MZ맛집 야장 6900 돌판짜장 맛집 위치 정보"
@@ -111,5 +166,4 @@ function BoardPage() {
     </div>
   );
 }
-
 export default BoardPage;
