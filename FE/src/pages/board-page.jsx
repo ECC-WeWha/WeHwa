@@ -2,165 +2,81 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import BoardNav from "../components/top-nav/top-nav.jsx";
 import BoardSidebar from "../components/sidebar/sidebar.jsx";
+import PostCard from "../components/board/postcard.jsx";
 
 const green = "#00664F";
 const softGreen = "#66A395";
-const border = "#B4B4B4";
-const gray = "#888";
 
-
-function PostCard({ username, title, description, likes, comments, time, onClick }) {
-  return (
-    <article
-      onClick={onClick}
-      style={{
-        border: `1px solid ${border}`,
-        borderRadius: 16,
-        padding: 20,
-        marginBottom: 16,
-        cursor: "pointer",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <div
-          style={{
-            width: 36,
-            height: 36,
-            borderRadius: "50%",
-            background: "#E9E9E9",
-          }}
-        />
-        <span style={{ fontSize: 14, color: "#1a1a1a" }}>{username}</span>
-      </div>
-
-      <h3
-        style={{
-          margin: "10px 0 6px",
-          color: green,
-          fontSize: 18,
-          fontWeight: 700,
-          lineHeight: 1.6,
-        }}
-      >
-        {title}
-      </h3>
-
-      <p style={{ margin: 0, color: "#333", fontSize: 16 }}>{description}</p>
-
-      <div style={{ marginTop: 10, display: "flex", gap: 16, color: gray, fontSize: 14 }}>
-        <span>❤️ {likes}</span>
-        <span>💬 {comments}</span>
-        <span>· {time}</span>
-      </div>
-    </article>
-  );
-}
+const posts = [
+  {
+    id: "123",
+    username: "heejin0316",
+    title: "생방송투데이 강서구 MZ맛집 야장 6900 돌판짜장 맛집 위치 정보",
+    description: "안녕하세요:)",
+    likes: 17,
+    comments: 17,
+    time: "3분 전",
+    body: "안녕하세요 :) ",
+  },
+  {
+    id: "456",
+    username: "user123",
+    title: "A Taste of Thailand in the Heart of Seoul: Uraproud Review",
+    description: "If you’re craving something beyond the usual Korean fare,  Uraproud is a must-visit. It’s proof that in Seoul, you can travel across continents without even boarding a plane — all it takes is a plate of steaming Pad Thai and a spoonful of curry.",
+    likes: 5,
+    comments: 2,
+    time: "10분 전",
+    body: "If you’re craving something beyond the usual Korean fare, Uraproud is a must-visit. It’s proof that in Seoul, you can travel across continents without even boarding a plane — all it takes is a plate of steaming Pad Thai and a spoonful of curry. From the moment you walk in, you’re greeted with the aroma of lemongrass, coconut milk, and sizzling garlic. The décor blends Thai cultural elements with a modern Seoul touch — think traditional woven lampshades, wooden tables, and colorful murals. Whether you’re here for a casual lunch or a cozy dinner with friends, it’s the kind of place that makes you want to linger. ",
+  },
+];
 
 function BoardPage() {
   const navigate = useNavigate();
 
+  const openPost = (post) => {
+    localStorage.setItem(`post:${post.id}`, JSON.stringify(post));
+    navigate(`/board/${post.id}`, { state: post });
+  };
+
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#fff" }}>
-      {/* Navigation bar */}
       <BoardNav active="board" />
-
-      <div
-        style={{
-          display: "flex",
-          maxWidth: "1440px",
-          margin: "0 auto",
-          padding: "40px 20px",
-          boxSizing: "border-box",
-        }}
-      >
-        {/* Sidebar */}
+      <div style={{ display: "flex", maxWidth: "1440px", margin: "0 auto", padding: "40px 20px", boxSizing: "border-box" }}>
         <BoardSidebar />
-
-        {/* Main Board */}
-        <main style={{ flex: 1, padding: "0 80px", justifyContent: "center" }}>
-          {/* Title row */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-              marginBottom: "16px",
-              position: "relative",
-            }}
-          >
-            <h2
-              style={{
-                fontSize: "40px",
-                fontWeight: "bold",
-                color: green,
-                margin: 0,
-                position: "absolute",
-                left: "50%",
-                transform: "translateX(-50%)",
-              }}
-            >
-              게시판
+        <main style={{ flex: 1, padding: "0 80px" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", marginBottom: "16px", position: "relative" }}>
+            <h2 style={{ fontSize: 40, fontWeight: "bold", color: green, margin: 0, position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
+              게시판 홈
             </h2>
           </div>
+          
 
-          {/* Search */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: "70px",
-              marginBottom: "24px",
-            }}
-          >
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 70, marginBottom: 24 }}>
             <input
               type="text"
               placeholder="검색"
-              style={{
-                padding: "15px 20px",
-                border: `1px solid ${softGreen}`,
-                borderRadius: "20px",
-                width: "240px",
-                fontSize: "20px",
-                fontFamily: "inherit",
-                outline: "none",
-              }}
+              style={{ padding: "15px 20px", border: `1px solid ${softGreen}`, borderRadius: 20, width: 240, fontSize: 20, fontFamily: "inherit", outline: "none" }}
             />
           </div>
 
-          {/* Category Tabs */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: "40px",
-              marginBottom: "50px",
-              marginTop: "10px",
-              fontWeight: "500",
-            }}
-          >
+          <div style={{ display: "flex", justifyContent: "center", gap: 40, marginBottom: 50, marginTop: 10, fontWeight: 500 }}>
             <span style={{ color: "#F2978F", cursor: "pointer" }}>인기순</span>
             <span style={{ color: "#888", cursor: "pointer" }}>최신순</span>
             <span style={{ color: "#888", cursor: "pointer" }}>스크랩 많은 글</span>
           </div>
 
-          {/* Posts */}
-          <PostCard
-            username="heejin0316"
-            title="생방송투데이 강서구 MZ맛집 야장 6900 돌판짜장 맛집 위치 정보"
-            description="안녕하세요:)"
-            likes={17}
-            comments={17}
-            time="3분 전"
-            onClick={() => navigate("/board/123")}
-          />
-          <PostCard
-            username="user123"
-            title="다른 포스트 예시 제목"
-            description="설명 내용"
-            likes={5}
-            comments={2}
-            time="10분 전"
-            onClick={() => navigate("/board/456")}
-          />
+          {posts.map((p) => (
+            <PostCard
+              key={p.id}
+              username={p.username}
+              title={p.title}
+              description={p.description}
+              likes={p.likes}
+              comments={p.comments}
+              time={p.time}
+              onClick={() => openPost(p)}
+            />
+          ))}
         </main>
       </div>
     </div>
