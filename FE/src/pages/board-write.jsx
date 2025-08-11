@@ -400,12 +400,23 @@ function BoardCategorySelect({ options = [], value, onChange, disabled }) {
           disabled={disabled}
           inputProps={{ name: "boardCategory" }}
           displayEmpty
+          style={{
+            fontFamily: "'IBM Plex Sans KR', sans-serif", // 👈 font for selected value
+            fontSize: "18px",
+          }}
         >
           <MenuItem value="" disabled>
             카테고리를 선택하세요
           </MenuItem>
           {options.map((opt) => (
-            <MenuItem key={opt.value} value={opt.value}>
+            <MenuItem
+            key={opt.value} 
+            value={opt.value}
+            sx={{
+              fontFamily: "'IBM Plex Sans KR', sans-serif",
+              fontSize: "18px",
+            }}
+            >
               {opt.label}
             </MenuItem>
           ))}
@@ -535,6 +546,8 @@ function BoardWrite() {
                   border: `1.5px solid ${green}`,
                   borderRadius: "20px",
                   outline: "none",
+                  fontFamily: "'IBM Plex Sans KR', sans-serif", 
+                  fontSize: "18px",
                 }}
               />
 
@@ -554,6 +567,8 @@ function BoardWrite() {
                   borderRadius: "20px",
                   outline: "none",
                   resize: "vertical",
+                  fontFamily: "'IBM Plex Sans KR', sans-serif", 
+                  fontSize: "18px",
                 }}
               />
 
@@ -574,6 +589,7 @@ function BoardWrite() {
                   outline: "none",
                   resize: "vertical",
                   fontFamily: "'IBM Plex Sans KR', sans-serif",
+                  fontSize: "18px",
                 }}
               />
 
@@ -640,7 +656,7 @@ function BoardWrite() {
               </div>
 
               {/* 게시판 (dropdown) */}
-              <label style={{ fontWeight: 600, color: green, fontSize: "20px" }}>
+              <label style={{ fontWeight: 600, color: green, fontSize: "20px", fontFamily: "'IBM Plex Sans KR', sans-serif"}}>
                 게시판 <span style={{ color: "red", fontSize: "10px", verticalAlign: "middle" }}>●</span>
               </label>
               <BoardCategorySelect
