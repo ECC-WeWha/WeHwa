@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-
+//board top navigation bar
 function BoardNav({ active }) {
   const navigate = useNavigate();
 

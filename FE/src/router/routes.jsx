@@ -28,7 +28,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <BoardPage /> },   // /board
           { path: "write", element: <BoardWrite /> }, // /board/write
-          { path: ":postId", element: <BoardDetail /> }, 
+          { path: ":postId", element: <BoardDetail /> }, // /board/mypage
           { path: "scrap", element: <BoardScrap /> },
           { path: "mypage", element: <BoardMyPage /> }  
         ], },
