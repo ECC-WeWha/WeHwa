@@ -9,6 +9,8 @@ import SignupPage from '../pages/signup-page';
 import BoardPage from "../pages/board-page";
 import BoardWrite from "../pages/board-write";
 import BoardDetail from "../pages/board-detail";
+import BoardScrap from "../pages/board-scrap";
+import BoardMyPage from "../pages/board-my-page";
 //import FriendListPage from '../pages/friend-list-page';
 //import FriendFindPage from '../pages/friend-find-page';
 import KakaoRedirection from "../components/user/KakaoRedirection";
@@ -26,7 +28,9 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <BoardPage /> },   // /board
           { path: "write", element: <BoardWrite /> }, // /board/write
-          { path: ":postId", element: <BoardDetail /> } // /board/mypage
+          { path: ":postId", element: <BoardDetail /> }, // /board/mypage
+          { path: "scrap", element: <BoardScrap /> },
+          { path: "mypage", element: <BoardMyPage /> }  
         ], },
       {/*{ path: "board", element: <BoardPage /> },
       { path: "friends-list", element: <FriendListPage /> },
