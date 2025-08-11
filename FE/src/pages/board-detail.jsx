@@ -1,36 +1,50 @@
-import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import BoardNav from "../components/top-nav/top-nav.jsx";
 import BoardSidebar from "../components/sidebar/sidebar.jsx";
 
 function BoardDetail() {
   const { postId } = useParams();
   const navigate = useNavigate();
+  const { state } = useLocation();
 
   const green = "#00664F";
   const gray = "#A0A0A0";
   const border = "#B4B4B4";
+  const secondGreen = "#66A395";
 
-  const [post] = useState({
-    id: postId || "123",
-    username: "heejin0316",
-    title: "생방송투데이 강서구 MZ맛집 야장 6900 돌판짜장 맛집 위치 정보",
-    body: "안녕하세요 :) ",
-    time: "3분 전",
-    likes: 17,
-    comments: 17,
-  });
+  const [post, setPost] = useState(state ?? null);
+
+  useEffect(() => {
+    if (!post && postId) {
+      const saved = localStorage.getItem(`post:${postId}`);
+      if (saved) {
+        setPost(JSON.parse(saved));
+        return;
+      }
+    }
+  }, [post, postId]);
+
+  if (!post) {
+    return (
+      <div style={{ padding: 30 }}>
+        <p>포스트를 불러오는 중이에요…</p>
+        <button onClick={() => navigate(-1)} style={{ padding: "8px 12px" }}>
+          목록으로 가기
+        </button>
+      </div>
+    );
+  }
 
   const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(post.likes);
-
+  const [likeCount, setLikeCount] = useState(post.likes ?? 0);
+  const [scrapped, setScrapped] = useState(false);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [commentText, setCommentText] = useState("");
-
-  // NEW: comments state
   const [comments, setComments] = useState([
     { id: 1, username: "user001", time: "2분 전", text: "정보 감사합니다!" },
     { id: 2, username: "foodie22", time: "5분 전", text: "여기 꼭 가볼게요" },
+    { id: 2, username: "nalinishungry", time: "5분 전", text: "I will try!" },
   ]);
 
   const toggleLike = () => {
@@ -38,11 +52,15 @@ function BoardDetail() {
     setLiked((v) => !v);
   };
 
+  const toggleScrap = () => {
+    setScrapped((v) => !v);
+  };
+
   const handleSubmitComment = () => {
     if (!commentText.trim()) return;
     const newComment = {
       id: Date.now(),
-      username: isAnonymous ? "익명" : "myUsername",
+      username: isAnonymous ? "익명" : "username",
       time: "방금 전",
       text: commentText.trim(),
     };
@@ -51,7 +69,6 @@ function BoardDetail() {
     setIsAnonymous(false);
   };
 
-  // NEW: delete comment
   const handleDeleteComment = (id) => {
     setComments((prev) => prev.filter((c) => c.id !== id));
   };
@@ -59,7 +76,6 @@ function BoardDetail() {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#fff" }}>
       <BoardNav active="board" />
-
       <div
         style={{
           display: "flex",
@@ -69,20 +85,18 @@ function BoardDetail() {
           boxSizing: "border-box",
         }}
       >
-        {/* Sidebar */}
         <BoardSidebar />
-
-        {/* Main */}
         <main style={{ flex: 1, padding: "0 80px" }}>
-          {/* Page title */}
-          <div style={{ position: "relative", marginBottom: "16px", height: 0 }}>
+          {/* Title */}
+          <div style={{ position: "relative", height: 72, marginBottom: 16 }}>
             <h2
               style={{
                 position: "absolute",
                 left: "50%",
-                transform: "translateX(-50%)",
-                fontSize: "32px",
-                fontWeight: "800",
+                top: "50%",
+                transform: "translate(-50%, -50%)",
+                fontSize: 40,
+                fontWeight: 800,
                 color: green,
                 margin: 0,
               }}
@@ -92,53 +106,52 @@ function BoardDetail() {
           </div>
 
           {/* Back button */}
-          <div style={{ marginBottom: 12 }}>
+          <div style={{ marginBottom: 20 }}>
             <button
               type="button"
               onClick={() => navigate(-1)}
               style={{
-                border: `1px solid ${border}`,
-                background: "#ffffff",
+                background: "#fff",
+                border: secondGreen,
                 borderRadius: 12,
                 padding: "15px 18px",
                 cursor: "pointer",
-                fontSize: 18,
+                fontSize: 16,
                 fontFamily: "inherit",
+                color: secondGreen,
               }}
             >
-              목록으로 가기
+              &lt; 목록으로 가기
             </button>
           </div>
 
-          {/* Post card */}
+          {/* Post */}
           <article
             style={{
-              border: `1px solid ${border}`,
+              //border: `1px solid ${border}`,
               borderRadius: 20,
-              padding: 24,
+              padding: 30,
             }}
           >
-            {/* Header row */}
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <div
                 style={{
-                  width: 40,
-                  height: 40,
+                  width: 50,
+                  height: 50,
                   borderRadius: "50%",
                   background: "#E9E9E9",
                 }}
               />
-              <span style={{ color: "#1a1a1a", fontSize: 14 }}>
+              <span style={{ color: "#1a1a1a", fontSize: 18 }}>
                 {post.username}
               </span>
             </div>
 
-            {/* Title */}
             <h1
               style={{
                 margin: "12px 0 6px",
                 color: green,
-                fontSize: "20px",
+                fontSize: 20,
                 fontWeight: 700,
                 lineHeight: 2,
               }}
@@ -146,45 +159,73 @@ function BoardDetail() {
               {post.title}
             </h1>
 
-            {/* Stats */}
+            {/* Like + Scrap buttons */}
             <div
               style={{
-                fontSize: 14,
+                fontSize: 18,
                 color: gray,
                 display: "flex",
-                gap: 16,
+                gap: 20,
+                alignItems: "center",
               }}
             >
-              <span
+              <button
                 onClick={toggleLike}
-                style={{ cursor: "pointer", color: liked ? "red" : "#444" }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  border: "none",
+                  background: "transparent",
+                  cursor: "pointer",
+                  color: liked ? "red" : "#444",
+                  fontSize: 18,
+                }}
               >
                 {liked ? "❤️" : "🤍"} {likeCount}
-              </span>
+              </button>
+
               <span>💬 {post.comments}</span>
               <span> · {post.time}</span>
+
+              <button
+                onClick={toggleScrap}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  border: `1px solid ${scrapped ? secondGreen : border}`,
+                  background: scrapped ? secondGreen : "#fff",
+                  color: scrapped ? "#fff" : "#1a1a1a",
+                  padding: "6px 12px",
+                  borderRadius: 8,
+                  cursor: "pointer",
+                  fontSize: 16,
+                  fontFamily: "inherit",
+                }}
+              >
+                {scrapped ? "스크랩됨" : "스크랩"}
+              </button>
             </div>
 
-            {/* Image block */}
             <div
               style={{
-                marginTop: 16,
+                marginTop: 25,
                 width: "100%",
-                height: 260,
-                borderRadius: 16,
+                height: 500,
+                borderRadius: 20,
                 background:
                   "repeating-conic-gradient(#f2f2f2 0% 25%, transparent 0% 50%) 50% / 24px 24px",
                 border: `1px dashed ${border}`,
               }}
             />
 
-            {/* Body */}
             <div
               style={{
-                fontSize: 16,
+                fontSize: 20,
                 lineHeight: 1.7,
-                color: "#333",
-                marginTop: 18,
+                color: "#1a1a1a",
+                marginTop: 20,
               }}
             >
               {post.body}
@@ -193,7 +234,13 @@ function BoardDetail() {
 
           {/* Comments */}
           <section style={{ marginTop: 20 }}>
-            <h3 style={{ fontSize: 18, margin: "0 0 10px", color: "#1a1a1a" }}>
+            <h3
+              style={{
+                fontSize: 18,
+                margin: "0 0 10px",
+                color: "#1a1a1a",
+              }}
+            >
               댓글
             </h3>
 
@@ -209,7 +256,7 @@ function BoardDetail() {
               >
                 <div
                   style={{
-                    fontSize: 14,
+                    fontSize: 18,
                     color: "#555",
                     marginBottom: 6,
                     display: "flex",
@@ -226,17 +273,17 @@ function BoardDetail() {
                       background: "transparent",
                       color: "#FF5A5A",
                       cursor: "pointer",
-                      fontSize: 14,
+                      fontSize: 18,
+                      textDecoration: "underline"
                     }}
                   >
                     삭제
                   </button>
                 </div>
-                <div style={{ fontSize: 16 }}>{c.text}</div>
+                <div style={{ fontSize: 20 }}>{c.text}</div>
               </div>
             ))}
 
-            {/* comment composer */}
             <div
               style={{
                 display: "flex",
@@ -245,7 +292,6 @@ function BoardDetail() {
                 alignItems: "center",
               }}
             >
-              {/* 익명 체크박스 */}
               <label
                 style={{
                   display: "inline-flex",
@@ -255,7 +301,7 @@ function BoardDetail() {
                   userSelect: "none",
                   whiteSpace: "nowrap",
                   color: "#1a1a1a",
-                  fontSize: 14,
+                  fontSize: 18,
                 }}
               >
                 <input
@@ -294,7 +340,7 @@ function BoardDetail() {
                   cursor: "pointer",
                   fontWeight: 600,
                   fontFamily: "inherit",
-                  fontSize: "18px",
+                  fontSize: 18,
                 }}
                 onClick={handleSubmitComment}
               >
