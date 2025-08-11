@@ -401,7 +401,7 @@ function BoardCategorySelect({ options = [], value, onChange, disabled }) {
           inputProps={{ name: "boardCategory" }}
           displayEmpty
           style={{
-            fontFamily: "'IBM Plex Sans KR', sans-serif", // 👈 font for selected value
+            fontFamily: "'IBM Plex Sans KR', sans-serif",
             fontSize: "18px",
           }}
         >
