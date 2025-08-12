@@ -158,7 +158,7 @@ function BoardDetail() {
               style={{
                 margin: "12px 0 6px",
                 color: green,
-                fontSize: 20,
+                fontSize: 25,
                 fontWeight: 700,
                 lineHeight: 2,
               }}
