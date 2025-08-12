@@ -11,10 +11,10 @@ import BoardWrite from "../pages/board-write";
 import BoardDetail from "../pages/board-detail";
 import BoardScrap from "../pages/board-scrap";
 import BoardMyPage from "../pages/board-my-page";
-//import FriendListPage from '../pages/friend-list-page';
-//import FriendFindPage from '../pages/friend-find-page';
+import FriendListPage from '../pages/friend-list-page';
+import FriendFindPage from '../pages/friend-find-page';
 import KakaoRedirection from "../components/user/KakaoRedirection";
-
+import ProfileSetupPage from "../pages/friend-profile-page"
 
 export const router = createBrowserRouter([
   {
@@ -32,9 +32,9 @@ export const router = createBrowserRouter([
           { path: "scrap", element: <BoardScrap /> },
           { path: "mypage", element: <BoardMyPage /> }  
         ], },
-      {/*{ path: "board", element: <BoardPage /> },
-      { path: "friends-list", element: <FriendListPage /> },
-      { path: "friends-find", element: <FriendFindPage /> },  //일단 각 페이지별로 하나씩은 */},
+      { path: "profilesetup", element: <ProfileSetupPage /> },
+      { path: "friendlist", element: <FriendListPage /> },
+      { path: "friendfind", element: <FriendFindPage /> },  //일단 각 페이지별로 하나씩은 */},
       {path:"/kakao/callback",element:< KakaoRedirection/>},
     ],
   },

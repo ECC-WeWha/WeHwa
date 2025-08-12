@@ -22,6 +22,7 @@ function InputBox({
         name={name}
         value={value}
         onChange={onChange}
+        style={style}
       >
         <option value="">{placeholder || "선택하세요"}</option>
         {options.map((opt) => (
@@ -43,6 +44,7 @@ function InputBox({
               value={opt.value}
               checked={value === opt.value}
               onChange={onChange}
+              style={style}
             />
             <span className="green-text-28px">{opt.label}</span>
           </label>
@@ -58,7 +60,6 @@ function InputBox({
       type={type}
       placeholder={placeholder}
       value={value}
-      defaultValue={defaultValue}
       onChange={onChange}
       min={min}
       max={max}
