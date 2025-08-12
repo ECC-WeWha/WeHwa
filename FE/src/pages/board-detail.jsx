@@ -2,6 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import BoardNav from "../components/top-nav/top-nav.jsx";
 import BoardSidebar from "../components/sidebar/sidebar.jsx";
+import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 function BoardDetail() {
   const { postId } = useParams();
@@ -44,7 +52,7 @@ function BoardDetail() {
   const [comments, setComments] = useState([
     { id: 1, username: "user001", time: "2분 전", text: "정보 감사합니다!" },
     { id: 2, username: "foodie22", time: "5분 전", text: "여기 꼭 가볼게요" },
-    { id: 2, username: "nalinishungry", time: "5분 전", text: "I will try!" },
+    { id: 3, username: "nalinishungry", time: "5분 전", text: "I will try!" },
   ]);
 
   const toggleLike = () => {
@@ -112,7 +120,7 @@ function BoardDetail() {
               onClick={() => navigate(-1)}
               style={{
                 background: "#fff",
-                border: secondGreen,
+                border: secondGreen, // optional: `1px solid ${secondGreen}`
                 borderRadius: 12,
                 padding: "15px 18px",
                 cursor: "pointer",
@@ -128,7 +136,6 @@ function BoardDetail() {
           {/* Post */}
           <article
             style={{
-              //border: `1px solid ${border}`,
               borderRadius: 20,
               padding: 30,
             }}
@@ -159,16 +166,17 @@ function BoardDetail() {
               {post.title}
             </h1>
 
-            {/* Like + Scrap buttons */}
+            {/* Like + Comment + Scrap */}
             <div
               style={{
                 fontSize: 18,
-                color: gray,
+                color: '#1a1a1a',
                 display: "flex",
                 gap: 20,
                 alignItems: "center",
               }}
             >
+              {/* Like */}
               <button
                 onClick={toggleLike}
                 style={{
@@ -178,16 +186,31 @@ function BoardDetail() {
                   border: "none",
                   background: "transparent",
                   cursor: "pointer",
-                  color: liked ? "red" : "#444",
                   fontSize: 18,
+                  color: '#1a1a1a',
                 }}
               >
-                {liked ? "❤️" : "🤍"} {likeCount}
+                {liked ? (
+                  <FavoriteIcon sx={{ fontSize: 22, color: 'red' }} />
+                ) : (
+                  <FavoriteBorderIcon sx={{ fontSize: 22, color: '#1a1a1a' }} />
+                )}
+                {likeCount}
               </button>
 
-              <span>💬 {post.comments}</span>
-              <span> · {post.time}</span>
+              {/* Comments */}
+              <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <ChatBubbleOutlineOutlinedIcon sx={{ fontSize: 20, color: '#1a1a1a' }} />
+                {post.comments}
+              </span>
 
+              {/* Time */}
+              <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                <AccessTimeOutlinedIcon sx={{ fontSize: 18, color: '#1a1a1a' }} />
+                {post.time}
+              </span>
+
+              {/* Scrap */}
               <button
                 onClick={toggleScrap}
                 style={{
@@ -204,6 +227,11 @@ function BoardDetail() {
                   fontFamily: "inherit",
                 }}
               >
+                {scrapped ? (
+                  <BookmarkIcon sx={{ fontSize: 20, color: "#fff" }} />
+                ) : (
+                  <BookmarkBorderIcon sx={{ fontSize: 20, color: "#1a1a1a" }} />
+                )}
                 {scrapped ? "스크랩됨" : "스크랩"}
               </button>
             </div>
@@ -292,26 +320,27 @@ function BoardDetail() {
                 alignItems: "center",
               }}
             >
-              <label
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  cursor: "pointer",
-                  userSelect: "none",
-                  whiteSpace: "nowrap",
+              {/* 익명 Checkbox */}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isAnonymous}
+                    onChange={(e) => setIsAnonymous(e.target.checked)}
+                    sx={{
+                      color: green,
+                      '&.Mui-checked': {
+                        color: green,
+                      },
+                    }}
+                  />
+                }
+                label="익명"
+                sx={{
+                  fontSize: 25,
                   color: "#1a1a1a",
-                  fontSize: 18,
+                  marginRight: 1,
                 }}
-              >
-                <input
-                  type="checkbox"
-                  checked={isAnonymous}
-                  onChange={(e) => setIsAnonymous(e.target.checked)}
-                  style={{ cursor: "pointer" }}
-                />
-                익명
-              </label>
+              />
 
               <input
                 type="text"
@@ -325,8 +354,8 @@ function BoardDetail() {
                   border: `1px solid ${border}`,
                   borderRadius: 12,
                   outline: "none",
-                  fontSize: 16,
-                  fontFamily: "inherit",
+                  fontSize: 18,
+                  fontFamily: "'IBM Plex Sans KR', sans-serif",
                 }}
               />
               <button
