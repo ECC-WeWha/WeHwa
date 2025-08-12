@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
+import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 
 function PostCard({
   username,
@@ -7,13 +11,13 @@ function PostCard({
   likes,
   comments,
   time,
-  onClick, 
+  onClick,
 }) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(likes);
 
   const toggleLike = (e) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     setLikeCount((c) => (liked ? c - 1 : c + 1));
     setLiked((v) => !v);
   };
@@ -46,19 +50,47 @@ function PostCard({
         <p style={{ margin: 0 }}>{username}</p>
         <h3 style={{ margin: "8px 0", color: "#00664F" }}>{title}</h3>
         <p style={{ color: "#A0A0A0" }}>{description}</p>
-        <div style={{ fontSize: "16px", marginTop: "20px" }}>
+
+        <div
+          style={{
+            fontSize: "16px",
+            marginTop: "20px",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            color: "#1a1a1a",
+          }}
+        >
+          {/* Like */}
           <span
             onClick={toggleLike}
             style={{
               cursor: "pointer",
-              color: liked ? "red" : "black",
-              marginRight: "8px",
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
             }}
             aria-label={liked ? "unlike" : "like"}
           >
-            {liked ? "❤️" : "🤍"} {likeCount}
+            {liked ? (
+              <FavoriteIcon sx={{ fontSize: 20, color: 'red' }} />
+            ) : (
+              <FavoriteBorderIcon sx={{ fontSize: 20, color: '#1a1a1a' }} />
+            )}
+            {likeCount}
           </span>
-          💬 {comments} · {time}
+
+          {/* Comments */}
+          <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <ChatBubbleOutlineOutlinedIcon sx={{ fontSize: 20, color: '#1a1a1a' }} />
+            {comments}
+          </span>
+
+          {/* Time */}
+          <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <AccessTimeOutlinedIcon sx={{ fontSize: 18, color: '#1a1a1a' }} />
+            {time}
+          </span>
         </div>
       </div>
     </div>

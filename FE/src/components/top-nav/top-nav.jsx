@@ -27,11 +27,11 @@ function BoardNav({ active }) {
         boxSizing: "border-box",
       }}
     >
-      <button onClick={() => navigate("/matching")} style={navButtonStyle}>
+      <button onClick={() => navigate("/friendfind")} style={navButtonStyle}>
         친구 매칭
       </button>
   
-      <button onClick={() => navigate("/friends-list")} style={navButtonStyle}>
+      <button onClick={() => navigate("/friendlist")} style={navButtonStyle}>
         친구 목록
       </button>
   
