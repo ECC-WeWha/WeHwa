@@ -120,7 +120,7 @@ function BoardDetail() {
               onClick={() => navigate(-1)}
               style={{
                 background: "#fff",
-                border: secondGreen, // optional: `1px solid ${secondGreen}`
+                border: secondGreen,
                 borderRadius: 12,
                 padding: "15px 18px",
                 cursor: "pointer",
