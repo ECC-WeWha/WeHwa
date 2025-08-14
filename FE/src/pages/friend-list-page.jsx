@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import ProfileCard from "../components/board/profilecard.jsx";
+//import ProfileCard from "../components/board/profilecard.jsx";
+import ProfileCardMini from "../components/board/profilecardmini.jsx";
 import BoardNav from "../components/top-nav/top-nav.jsx";
 import FriendListSidebar from "../components/sidebar/friend-list-sidebar.jsx";
 import { useMatch, useNavigate } from "react-router-dom";
@@ -78,6 +79,7 @@ const border = "#ffffff";
 export default function FriendListPage() {
     const navigate = useNavigate();
     const isRequests = useMatch("/friendlist/requests") !== null;
+    const context = isRequests ? "requests" : "list";
 
     const [favorites, setFavorites] = useState(() => new Set());
     const toggleFavorite = (id) => {
@@ -133,12 +135,13 @@ return (
                 }}
             >
               {DATA.map((u) => (
-                <ProfileCard
+                <ProfileCardMini
                     key={u.id}
                     user={u}
                     requested={favorites.has(u.id)}
                     onToggleRequest={() => toggleFavorite(u.id)}
                     onClick={() => openProfile(u)}
+                    context={context}
                 />
               ))}
             </div>
