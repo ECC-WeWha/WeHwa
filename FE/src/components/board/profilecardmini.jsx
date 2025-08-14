@@ -16,33 +16,77 @@ const Tag = ({ children }) => (
     {children}
   </span>
 );
-
-function RequestBadge({ requested, onToggle }) {
-  return (
-    <button
-      type="button"
-      onClick={(e) => {
-        e.stopPropagation(); 
-        onToggle();
-      }}
-      style={{
-        border: "none",
-        background: requested ? "#f59d95" : "#79BCCF",
-        color: "#ffffff",
-        padding: "8px 15px",
-        borderRadius: 20,
-        fontSize: 14,
-        cursor: "pointer",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {requested ? "요청 취소" : "친구 신청"}
-    </button>
-  );
+function RequestBadge({onAccept, onReject }) {
+    return (
+    <div style={{ display: "flex", gap: 28 }}>
+        <button
+        type="button"
+        onClick={onAccept}
+        style={{
+            border: "none",
+            background: "#79BCCF",
+            color: "#ffffff",
+            padding: "8px 15px",
+            borderRadius: 20,
+            fontSize: 14,
+            cursor: "pointer",
+            whiteSpace: "nowrap",
+            boxShadow: "0 1px 2px rgba(0,0,0,0.06)",
+        }}
+        >
+            수락
+        </button>
+        <button
+        type="button"
+        onClick={onReject}
+        style={{
+            border: "none",
+            background: "#f59d95",
+            color: "#ffffff",
+            padding: "8px 15px",
+            borderRadius: 20,
+            fontSize: 14,
+            cursor: "pointer",
+            whiteSpace: "nowrap",
+            boxShadow: "0 1px 2px rgba(0,0,0,0.06)",
+        }}
+        >
+            거절
+        </button>
+    </div>
+    );
+}
+function ListBadge({ instagram, kakao,onDelete }) {
+    return (
+    <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
+        {kakao && (
+        <a href={kakao} target="_blank" rel="noreferrer" title="Kakao"
+            style={{ width: "30px",height: "30px", borderRadius: "50%", border: "none" }}>
+            <img src={KakaoLink} alt="카카오 링크"/>
+        </a>
+        )}
+        {instagram && (
+        <a href={instagram} target="_blank" rel="noreferrer" title="Instagram"
+            style={{ width: "30px",height: "30px", borderRadius: "50%", border: "none" }}>
+            <img src={InstaLink} alt="인스타 링크"/> 
+        </a>
+        )}
+        
+    </div>
+    );
 }
 
-export default function ProfileCard({ user, requested, onToggleRequest, onClick }) {
-  return (
+export default function ProfileCard({
+    user,
+    requested,
+    onToggleRequest,
+    onClick,
+    context = "search",         // "search" | "list" | "requests"
+    onAccept, onReject,         // requests 전용
+    onDelete, onInstagram, onKakao, // list 전용
+}) {
+
+return (
     <div
       style={{
         width: 300,
@@ -104,9 +148,22 @@ export default function ProfileCard({ user, requested, onToggleRequest, onClick 
             {user.name}
           </strong>
         </div>
-        
-        <RequestBadge requested={requested} onToggle={onToggleRequest} />
-      </div>
+
+        {/* 작은 버튼을 추가하기 위한 이런..*/}
+        {context === "list" && (
+            <ListBadge
+            onDelete={onDelete}
+            onInstagram={onInstagram}
+            onKakao={onKakao}
+        />
+        )}
+        {context === "requests" && (
+            <RequestBadge
+            onAccept={onAccept}
+            onReject={onReject}
+        />      
+        )}
+    </div>
 
       {/* Languages */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>

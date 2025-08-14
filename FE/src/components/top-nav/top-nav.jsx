@@ -38,7 +38,13 @@ function BoardNav() {
         }}
       >
         {menuItems.map((item) => {
-          const isActive = location.pathname === item.path;
+          const isActive = 
+          item.path === "/friendlist"
+          ? location.pathname.startsWith("/friendlist") 
+          : item.path === "/board"
+          ? location.pathname === "/board" || location.pathname.startsWith("/board/")
+          : location.pathname === item.path;
+
           return (
             <button
               key={item.path}
