@@ -52,7 +52,7 @@ function HomePage() {
           style={{
             width:"191px",
             height:"70px",
-            background: "#F27367",
+            background: "#F27367CC", //색 수정
             border:"none",
             color: "#ffffff",
             borderRadius: 20,
