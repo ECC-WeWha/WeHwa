@@ -6,6 +6,7 @@ import App from "../App";
 import HomePage from "../pages/home-page";
 import LoginPage from '../pages/login-page';
 import SignupPage from '../pages/signup-page';
+import ProfilePage from "../pages/profile-page";
 import BoardPage from "../pages/board-page";
 import BoardWrite from "../pages/board-write";
 import BoardDetail from "../pages/board-detail";
@@ -27,7 +28,8 @@ export const router = createBrowserRouter([
     children: [
       { path: "", element: <HomePage /> },
       { path: "login", element: <LoginPage /> },    
-      {path: "signup", element: <SignupPage /> },   
+      {path: "signup", element: <SignupPage /> }, 
+      {path : "profile", element: <ProfilePage/>}, 
       { path: "board",
         children: [
           { index: true, element: <BoardPage /> },   // /board
