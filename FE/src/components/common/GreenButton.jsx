@@ -2,9 +2,9 @@
 import React from "react";
 import "../../styles/button.css";
 
-function GreenButton({ text, onClick }) {
+function GreenButton({ text, onClick , disabled}) {
   return (
-      <button className="green-button" onClick={onClick}>
+      <button className="green-button" onClick={onClick} disabled={disabled} >
         <span className="green-button-text">{text}</span>
       </button>
   );

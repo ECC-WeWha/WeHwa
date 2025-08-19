@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 //import GreenButton from "../components/common/GreenButton.jsx";
-import InputBox from "../components/common/InputBox";
 import "../styles/signup.css";
 import Step1Form from "../components/user/SignupStep1";
 import Step2Form from "../components/user/SignupStep2";

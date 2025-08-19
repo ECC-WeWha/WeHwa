@@ -36,10 +36,10 @@ function LoginPage() {
 
       navigate("/");
     } else {
-      alert(res.data.message || "로그인 실패 😢");
+      alert(res.data.message || "로그인 실패");
     }
   } catch (err) {
-      console.error("서버 오류 ❌", err);
+      console.error("서버 오류", err);
       alert("로그인 중 오류가 발생했습니다.");
   } 
 };

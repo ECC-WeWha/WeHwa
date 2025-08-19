@@ -1,5 +1,7 @@
 import React,{useState}from "react"
 import InputBox from "../components/common/InputBox";
+import SelectBox from "../components/common/Select";
+import RadioBox from "../components/common/Radio";
 import GreenButton from "../components/common/GreenButton";
 import { useNavigate } from "react-router-dom";   
 
@@ -29,15 +31,14 @@ function ProfileSetupPage() {
         });
 
         navigate("/friendfind", { replace: true });
-      };
+    };
     
 return (
     <div style={{display:"flex",width:"737px",marginTop:"250px",marginLeft:"330px",flexDirection: "column",gap:"60px" }}>
         <div style={{display:"flex",justifyContent: "space-between",alignItems: "center"}}>
             <div className="label-title">모국어</div>
-            <InputBox
+            <SelectBox
                 style={{ width: "200px",marginRight:"230px" }}
-                type="select"
                 name="nativeLanguage"
                 value={formData.nativeLanguage}
                 placeholder=""
@@ -48,15 +49,12 @@ return (
                 { value: "japanese",label: "Japanese" },
                 { value: "chinese", label: "Chinese" },
                 { value: "thai",    label: "Thai" },
-                ]}
-                
-            />
+                ]} />
         </div>
         <div style={{display:"flex",justifyContent: "space-between",alignItems: "center"}}>
             <div className="label-title">학습언어</div>
-            <InputBox
+            <SelectBox
                 style={{ width: "200px",marginRight:"230px"}}
-                type="select"
                 name="targetLanguage"
                 value={formData.targetLanguage}
                 placeholder=""
@@ -73,9 +71,8 @@ return (
         </div>
         <div style={{display:"flex",justifyContent: "space-between",alignItems: "center"}}>
             <div className="label-title">목적</div>
-            <div style={{gap:"60px",marginRight:"100px",display:"flex"}}>
-                <InputBox
-                    type="radio"
+            <div style={{gap:"60px",marginRight:"140px",display:"flex"}}>
+                <RadioBox
                     style={{ display: "flex", alignItems: "center", gap: "50px" }}
                     name="purpose"
                     value={formData.purpose}
