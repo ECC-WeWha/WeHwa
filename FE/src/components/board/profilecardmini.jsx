@@ -1,5 +1,7 @@
 import React from "react";
 import FlagCircleOutlinedIcon from "@mui/icons-material/FlagCircleOutlined";
+import KakaoLink from "../../assets/images/kakaologin.png";
+import InstaLink from "../../assets/images/insta.png"
 
 const Tag = ({ children }) => (
   <span
@@ -56,25 +58,61 @@ function RequestBadge({onAccept, onReject }) {
     </div>
     );
 }
-function ListBadge({ instagram, kakao,onDelete }) {
+function ListBadge({badgeInfo, size = 30  }) {
+  const hasLink = !!badgeInfo?.link; 
+  const handleClick = (e) => {
+    e.stopPropagation(); // onClick과 충돌 방지
+    if (!hasLink) return;
+  };
+  const commonStyle = {                        
+    width: `${size}px`,
+    height: `${size}px`,
+    borderRadius: "50%",
+    border: "none",
+    display: "inline-flex",
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    opacity: hasLink ? 1 : 0.5,               // 비활성 표시
+    cursor: hasLink ? "pointer" : "default",  
+  };
+
+  const Img = (
+    <img
+      src={badgeInfo.image}
+      alt={badgeInfo.title}
+      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+    />
+  );
+
+  if (hasLink) {
     return (
-    <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
-        {kakao && (
-        <a href={kakao} target="_blank" rel="noreferrer" title="Kakao"
-            style={{ width: "30px",height: "30px", borderRadius: "50%", border: "none" }}>
-            <img src={KakaoLink} alt="카카오 링크"/>
-        </a>
-        )}
-        {instagram && (
-        <a href={instagram} target="_blank" rel="noreferrer" title="Instagram"
-            style={{ width: "30px",height: "30px", borderRadius: "50%", border: "none" }}>
-            <img src={InstaLink} alt="인스타 링크"/> 
-        </a>
-        )}
-        
-    </div>
+      <a
+        href={badgeInfo.link}
+        target="_blank"
+        rel="noreferrer"
+        title={badgeInfo.title}
+        onClick={(e) => e.stopPropagation()}
+        style={commonStyle}
+        aria-label={badgeInfo.title}
+      >
+        {Img}
+      </a>
     );
+  }
+  return (
+    <div
+      role="img"
+      aria-label={`${badgeInfo.title} (연결 예정)`}
+      title={`${badgeInfo.title} (연결 예정)`}
+      style={commonStyle}
+      onClick={(e) => e.stopPropagation()}
+    >
+      {Img}
+    </div>
+  );
 }
+
 
 export default function ProfileCard({
     user,
@@ -85,6 +123,11 @@ export default function ProfileCard({
     onAccept, onReject,         // requests 전용
     onDelete, onInstagram, onKakao, // list 전용
 }) {
+  const badges = [
+    { link: user?.kakao || null,     image: KakaoLink, title: "Kakao" },     
+    { link: user?.instagram || null, image: InstaLink, title: "Instagram" },
+  ];
+
 
 return (
     <div
@@ -151,11 +194,11 @@ return (
 
         {/* 작은 버튼을 추가하기 위한 이런..*/}
         {context === "list" && (
-            <ListBadge
-            onDelete={onDelete}
-            onInstagram={onInstagram}
-            onKakao={onKakao}
-        />
+          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+            {badges.map((badge, index) => (
+              <ListBadge key={index} badgeInfo={badge} size={30} />
+            ))}
+          </div>
         )}
         {context === "requests" && (
             <RequestBadge

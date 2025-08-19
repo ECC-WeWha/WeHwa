@@ -57,7 +57,71 @@ function RequestActions({ onAccept, onReject }) {
     </div>
     );
 }
-function SocialActions({ instagram, kakao,onDelete }) {
+// link 없어도 렌더. link 있으면 <a>, 없으면 <div role="img">
+function ListBadge({ badgeInfo, size = 57 }) {
+  const hasLink = !!badgeInfo?.link;
+
+  const commonStyle = {
+    width: `${size}px`,
+    height: `${size}px`,
+    borderRadius: "50%",
+    border: "none",
+    display: "inline-flex",
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    // 링크 없으면 흐리게 + 클릭 불가 커서
+    opacity: hasLink ? 1 : 0.5,
+    cursor: hasLink ? "pointer" : "default",
+  };
+
+  const Img = (
+    <img
+      src={badgeInfo.image}
+      alt={badgeInfo.title}
+      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+    />
+  );
+
+  if (hasLink) {
+    return (
+      <a
+        href={badgeInfo.link}
+        target="_blank"
+        rel="noreferrer"
+        title={badgeInfo.title}
+        onClick={(e) => e.stopPropagation()}
+        style={commonStyle}
+        aria-label={badgeInfo.title}
+      >
+        {Img}
+      </a>
+    );
+  }
+
+  // 링크 없을 때: 단순 표시용
+  return (
+    <div
+      role="img"
+      aria-label={`${badgeInfo.title} (연결 예정)`}
+      title={`${badgeInfo.title} (연결 예정)`}
+      style={commonStyle}
+      onClick={(e) => e.stopPropagation()}
+    >
+      {Img}
+    </div>
+  );
+}
+
+function buildBadgesFromUser(user) {
+  return [
+    { link: user?.kakao || null,     image: KakaoLink, title: "Kakao" },
+    { link: user?.instagram || null, image: InstaLink, title: "Instagram" },
+  ];
+}
+
+
+function SocialActions({ badges ,onDelete }) {
     return (
     <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
         <button
@@ -78,20 +142,8 @@ function SocialActions({ instagram, kakao,onDelete }) {
         >
         친구 삭제
         </button>
-        {/*여긴 아직 확인 전*/}
-        {kakao && (
-        <a href={kakao} target="_blank" rel="noreferrer" title="Kakao"
-            style={{ width: "57px",height: "57px", borderRadius: "50%", border: "none" }}>
-            <img src={KakaoLink} alt="카카오 링크"/>
-        </a>
-        )}
-        {instagram && (
-        <a href={instagram} target="_blank" rel="noreferrer" title="Instagram"
-            style={{ width: "57px",height: "57px", borderRadius: "50%", border: "none" }}>
-            <img src={InstaLink} alt="인스타 링크"/> 
-        </a>
-        )}
-        
+        {badges?.length > 0 &&
+        badges.map((b, i) => <ListBadge key={`${b.title}-${i}`} badgeInfo={b} size={57} />)}    
     </div>
     );
 }
@@ -134,6 +186,8 @@ export default function FriendListDetail() {
         kakao: "https://open.kakao.com/o/test",
         };
     }, [state, id]);
+
+    const badges = useMemo(() => buildBadgesFromUser(user), [user]);
 
     const [processing, setProcessing] = useState(false); // 요청 수락/거절 API 처리 중 표시용(옵션)
     const handleAccept = async () => {
@@ -242,7 +296,7 @@ return (
               {isRequests ? (
                 <RequestActions onAccept={handleAccept} onReject={handleReject} />
               ) : (
-                <SocialActions instagram={user.instagram} kakao={user.kakao} onDelete={handleDeleteFriend}/>
+                <SocialActions badges={badges} onDelete={handleDeleteFriend} />
               )}
             </div>
 
