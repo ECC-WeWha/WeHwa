@@ -1,19 +1,19 @@
 import React from "react";
 import "../../styles/button.css";
 
+
 function InputBox({
   name,
   type = "text",
-  placeholder,
+  placeholder="",
   value,
   onChange,
-  checked,
-  options,
   min,
   max,
   step,
-  defaultValue,
+  disabled = false,
   style,
+<<<<<<< Updated upstream
 }) {
   if (type === "select" && options) { //일단 select는 안꾸미는걸로 
     return (
@@ -51,22 +51,33 @@ function InputBox({
     );
   }
 
+=======
+  ...rest
+}) 
+  {
+>>>>>>> Stashed changes
   return (
     <input
       className="input-box"
       name={name}
       type={type}
       placeholder={placeholder}
+<<<<<<< Updated upstream
       value={value}
       defaultValue={defaultValue}
+=======
+      value={value ?? ""}
+>>>>>>> Stashed changes
       onChange={onChange}
       min={min}
       max={max}
       step={step}
+      disabled={disabled}
       style={style} 
+      {...rest}
     />
   );
-}
+  }
 
 
 export default InputBox;

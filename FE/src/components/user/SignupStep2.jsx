@@ -1,10 +1,18 @@
-import React from "react"
-import InputBox from "../common/InputBox"
+import React,{useState, useMemo} from "react"
+import InputBox from "../common/InputBox";
 import GreenButton from "../../components/common/GreenButton";
-
+import SelectBox from "../common/Select";
+import RadioBox from "../common/Radio";
 // 국적 학적 학년 년생
 
 function Step2Form({ formData, onChange, nextStep,backStep}){
+
+    const nationalityError = useMemo(() => {
+        return formData.nationality ? "" : "error";
+    }, [formData.nationality]);
+    const isStepValid = !nationalityError;
+
+
     return (
         <>
             <div className="signup-three">
@@ -13,8 +21,7 @@ function Step2Form({ formData, onChange, nextStep,backStep}){
                     <div className="signup-need-text">*</div>
                 </div>
                 <div className="three center">
-                    <InputBox
-                        type="select"
+                    <SelectBox
                         name="nationality"
                         placeholder=""
                         value={formData.nationality}
@@ -28,8 +35,7 @@ function Step2Form({ formData, onChange, nextStep,backStep}){
                             {value: "Thailand", label:"Thailand"},
                             {value: "French", label:"French"},
                             {value: "Germany", label:"Germany"},
-                        ]}
-                    />
+                        ]}/>
                 </div>
                 <div className="three right"></div>  {/*비워놓고*/}
             </div>
@@ -37,8 +43,8 @@ function Step2Form({ formData, onChange, nextStep,backStep}){
                 <div className="three left">
                     <div className="signup-green-text">학적</div>
                 </div>
-                <div className="three center" style={{marginLeft:"-850px"}}>
-                    <InputBox
+                <div className="three center" style={{marginLeft:"-700px"}}>
+                    <RadioBox 
                         type="radio"
                         name="studentStatus"
                         value={formData.studentStatus}
@@ -48,7 +54,7 @@ function Step2Form({ formData, onChange, nextStep,backStep}){
                             { value: "졸업생", label: "졸업생" },
                             { value: "기타", label: "기타" },
                         ]}
-                        />
+                    />
                 </div>
             </div>
             <div className="signup-three">
@@ -57,17 +63,17 @@ function Step2Form({ formData, onChange, nextStep,backStep}){
                 </div>
                 <div className="three center">
                     <InputBox
-                        type="text"
+                        type="number"
                         name="grade"
                         placeholder=""
                         value={formData.grade}
                         onChange={onChange}
                         style={{flex:"1"}}
+                        min={1}
+                        max={8}
                     />
                 </div>
-                <div className="three right">
-                    <div className="red-text-20px">숫자만 입력해 주세요. </div>
-                </div>  {/*경고메세지 들어갈 자리*/}
+                <div className="three right"></div>
             </div>
             <div className="signup-three">
                 <div className="three left">
@@ -95,7 +101,16 @@ function Step2Form({ formData, onChange, nextStep,backStep}){
                 width: "500px",
                 margin: "0 auto", }}>
                 <GreenButton onClick={backStep} text="이전"></GreenButton>
-                <GreenButton onClick={nextStep} text="다음"></GreenButton>
+                <GreenButton
+                onClick={() => {
+                    if (isStepValid) {
+                    nextStep();
+                    } else {
+                    alert("입력값을 확인해주세요");
+                    }
+                }}
+                text="다음"
+                />
             </div>
         </>
     );
