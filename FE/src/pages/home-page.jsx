@@ -1,7 +1,11 @@
 
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import flagthi from "../assets/images/flagthi.png";
+import flagcn from "../assets/images/flagcn.png";
+import flagin from "../assets/images/flagin.png";
+import flagjp from "../assets/images/flagjp.png";
+import flaggm from "../assets/images/flaggm.png";
 const green = "#00664F";
 const softGreen = "#66A395";
 const gray ="#B4B4B4";
@@ -10,6 +14,12 @@ function HomePage() {
   const navigate = useNavigate();
   const location = useLocation();
   
+  const flag = {
+    width:"30px",
+    height:"30px",
+    verticalAlign: "middle",
+    marginLeft:"80px"
+  }
   const goFriendFind = () => {
     navigate("/friendfind");
   };
@@ -124,19 +134,29 @@ function HomePage() {
             gap:"20px",
           }}>
             <div style={smallContry}>
-              <div style={{fontSize: "18px",marginTop:"19px",marginLeft:"27px"}} onClick={() => navigate("/board")}>태국 게시판</div>
+              <div style={{fontSize: "18px",marginTop:"19px",marginLeft:"27px",alignItems: "center"}} onClick={() => navigate("/board")}>태국 게시판
+                <img src={flagthi} alt="로고" style={flag}></img>
+              </div>
             </div>
             <div style={smallContry}>
-              <div style={{fontSize: "18px",marginTop:"19px",marginLeft:"27px"}} onClick={() => navigate("/board")}>러시아 게시판</div>
+              <div style={{fontSize: "18px",marginTop:"19px",marginLeft:"27px",alignItems: "center"}} onClick={() => navigate("/board")}>독일 게시판
+                <img src={flaggm} alt="로고" style={flag}></img>
+              </div>
             </div>
             <div style={smallContry}>
-              <div style={{fontSize: "18px",marginTop:"19px",marginLeft:"27px"}} onClick={() => navigate("/board")}>일본 게시판</div>
+              <div style={{fontSize: "18px",marginTop:"19px",marginLeft:"27px",alignItems: "center"}} onClick={() => navigate("/board")}>일본 게시판
+                <img src={flagjp} alt="로고" style={flag}></img>
+              </div>
             </div>
             <div style={smallContry}>
-              <div style={{fontSize: "18px",marginTop:"19px",marginLeft:"27px"}} onClick={() => navigate("/board")}>인도 게시판</div>
+              <div style={{fontSize: "18px",marginTop:"19px",marginLeft:"27px",alignItems: "center"}} onClick={() => navigate("/board")}>인도 게시판
+                <img src={flagin} alt="로고" style={flag}></img>
+              </div>
             </div>
             <div style={smallContry}>
-              <div style={{fontSize: "18px",marginTop:"19px",marginLeft:"27px"}} onClick={() => navigate("/board")}>중국 게시판</div>
+              <div style={{fontSize: "18px",marginTop:"19px",marginLeft:"27px",alignItems: "center"}} onClick={() => navigate("/board")}>중국 게시판
+                <img src={flagcn} alt="로고" style={flag}></img>
+              </div>
             </div>
         </div>
       </div>
