@@ -49,8 +49,7 @@ return (
                 { value: "japanese",label: "Japanese" },
                 { value: "chinese", label: "Chinese" },
                 { value: "thai",    label: "Thai" },
-                ]}
-            />
+                ]} />
         </div>
         <div style={{display:"flex",justifyContent: "space-between",alignItems: "center"}}>
             <div className="label-title">학습언어</div>

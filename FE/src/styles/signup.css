@@ -60,6 +60,14 @@
     line-height: 100%;
     color: #ff0000;
 }
+.profile-light-green {
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 100%;
+    color: #00664F;
+    word-break: break-all;
+}
 
 
 .green-text-28px{

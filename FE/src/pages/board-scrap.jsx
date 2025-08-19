@@ -21,12 +21,22 @@ const posts = [
   {
     id: "456",
     username: "user123",
-    title: "A Taste of Thailand in the Heart of Seoul: Uraproud Review",
-    description: "If you’re craving something beyond the usual Korean fare,  Uraproud is a must-visit. It’s proof that in Seoul, you can travel across continents without even boarding a plane — all it takes is a plate of steaming Pad Thai and a spoonful of curry.",
+    title: "다른 포스트 예시 제목",
+    description: "설명 내용",
     likes: 5,
     comments: 2,
     time: "10분 전",
-    body: "If you’re craving something beyond the usual Korean fare, Uraproud is a must-visit. It’s proof that in Seoul, you can travel across continents without even boarding a plane — all it takes is a plate of steaming Pad Thai and a spoonful of curry. From the moment you walk in, you’re greeted with the aroma of lemongrass, coconut milk, and sizzling garlic. The décor blends Thai cultural elements with a modern Seoul touch — think traditional woven lampshades, wooden tables, and colorful murals. Whether you’re here for a casual lunch or a cozy dinner with friends, it’s the kind of place that makes you want to linger. ",
+    body: "본문 예시 입니다.",
+  },
+  {
+    id: "43043",
+    username: "nalin",
+    title: "다른 포스트 예시 제목",
+    description: "설명 내용",
+    likes: 5,
+    comments: 2,
+    time: "10분 전",
+    body: "본문 예시 입니다.",
   },
 ];
 
@@ -46,10 +56,9 @@ function BoardPage() {
         <main style={{ flex: 1, padding: "0 80px" }}>
           <div style={{ display: "flex", alignItems: "flex-start", marginBottom: "16px", position: "relative" }}>
             <h2 style={{ fontSize: 40, fontWeight: "bold", color: green, margin: 0, position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
-              게시판 홈
+              나의 스크랩
             </h2>
           </div>
-          
 
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 70, marginBottom: 24 }}>
             <input
@@ -57,12 +66,6 @@ function BoardPage() {
               placeholder="검색"
               style={{ padding: "15px 20px", border: `1px solid ${softGreen}`, borderRadius: 20, width: 240, fontSize: 20, fontFamily: "inherit", outline: "none" }}
             />
-          </div>
-
-          <div style={{ display: "flex", justifyContent: "center", gap: 40, marginBottom: 50, marginTop: 10, fontWeight: 500 }}>
-            <span style={{ color: "#F2978F", cursor: "pointer" }}>인기순</span>
-            <span style={{ color: "#888", cursor: "pointer" }}>최신순</span>
-            <span style={{ color: "#888", cursor: "pointer" }}>스크랩 많은 글</span>
           </div>
 
           {posts.map((p) => (

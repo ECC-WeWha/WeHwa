@@ -32,7 +32,14 @@ function Header() {
       navigate("/login");
     }
   };
-  
+  const handleProfileClick = () => {
+    if (isLoggedIn) {
+      navigate("/profile");
+    } else {
+      alert("로그인 후 이용 가능합니다.");
+      navigate("/login");
+    }
+  };
 
   return (
   <header className="header-bar"> 
@@ -52,9 +59,10 @@ function Header() {
         <div className="main-button" onClick={handleLoginBoxClick}>
           {isLoggedIn ? "로그아웃" : "로그인"}
         </div>
-        <img src={profileImage} alt="로고" className="profile-image" />
+        <img src={profileImage} alt="로고" className="profile-image" onClick={handleProfileClick} 
+            style={{ cursor: "pointer" }} />
         {isLoggedIn && (
-          <div className="user-id">{userId}</div> )}
+          <div className="user-id" onClick={handleProfileClick} style={{ cursor: "pointer" }}>{userId}</div> )}
         <img src={alarmImge} alt="로고" className="alarm-image"/>
     </div>
 

@@ -1,0 +1,22 @@
+.background-image{
+    max-width: 100%; 
+    width: 1150px;
+    height: 220px;
+    border-radius: 26px;
+
+}
+.profile-image-header{
+    width: 1072px;
+    height: 216px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gray-text-24px{
+    font-family: 'IBM Plex Sans KR', sans-serif;
+    font-size: 24px;
+    line-height: 100%;
+    color: #8B8A8A;
+}
+
