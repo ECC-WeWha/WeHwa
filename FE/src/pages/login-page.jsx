@@ -23,9 +23,10 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+
   const handleLogin = async () => {
     try {
-      const res = await axios.post(`${BACKEND_URL}login`, {
+      const res = await axios.post( `${BACKEND_URL}/api/auth/login`, {
         username,
         password,
     });
@@ -44,15 +45,16 @@ function LoginPage() {
   } 
 };
 
-
+  const BACKEND_URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
   const REST_API_KEY = import.meta.env.VITE_REACT_APP_REST_API_KEY;
   const REDIRECT_URI = import.meta.env.VITE_REACT_APP_REDIRECT_URI;
-  const BACKEND_URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
-  const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+  const KAKAO_AUTH_URL =
+  `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}` +
+  `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+  `&response_type=code`;
 
   const handleKakaoLogin = () => {
-    const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-    window.location.href = kakaoAuthURL;
+    window.location.href = KAKAO_AUTH_URL;
   };
   return (
     <div style={{
