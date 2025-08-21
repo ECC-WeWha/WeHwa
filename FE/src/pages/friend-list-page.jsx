@@ -3,7 +3,8 @@ import ProfileCardMini from "../components/board/profilecardmini.jsx";
 import BoardNav from "../components/top-nav/top-nav.jsx";
 import FriendListSidebar from "../components/sidebar/friend-list-sidebar.jsx";
 import { useMatch, useNavigate } from "react-router-dom";
-import axios from "axios";
+//import axios from "axios";
+import {api} from "../api/client.js";
 /*
 const FRIENDS = [
     { 
@@ -30,8 +31,9 @@ const REQUESTS = [
 ]
 */ //다 버리기엔 아까워서 하나씩만 남겨놓
 const border = "#ffffff";
-const BASE = (import.meta.env.VITE_REACT_APP_BACKEND_URL || "").replace(/\/+$/, "");
-//백엔드 가져오기
+//const BASE = (import.meta.env.VITE_REACT_APP_BACKEND_URL || "").replace(/\/+$/, "");
+
+
 
 export default function FriendListPage() {
     const navigate = useNavigate();
@@ -69,9 +71,13 @@ export default function FriendListPage() {
         (async () => {
         try {
         const [fRes, rRes] = await Promise.all([
-            axios.get(`${BASE}/api/friends`, { withCredentials: true }),
-            axios.get(`${BASE}/api/friend-requests`, { withCredentials: true }),
+            api.get("/api/friends"),
+            api.get("/api/friend-requests")
+            //axios.get(`${BASE}/api/friends`, {withCredentials: true }),
+            //axios.get(`${BASE}/api/friend-requests`, { withCredentials: true }),
         ]);
+
+
         const fData = Array.isArray(fRes.data?.data) ? fRes.data.data : fRes.data || [];
         setFriends(fData.map(mapUser));
         const rRaw = Array.isArray(rRes.data?.data) ? rRes.data.data : rRes.data || [];
@@ -80,22 +86,21 @@ export default function FriendListPage() {
             user: mapUser(r.requester ?? r.user ?? r),
         }));
         setRequests(rData);
-        } catch (e) {
-        alert("친구/요청 데이터를 불러오지 못했습니다.");
-        setFriends([]);
-        setRequests([]);
-    }
+        } 
+        catch (e) {
+            const s = e?.response?.status;
+            if (s === 401) alert("로그인이 필요합니다. 🔑");
+            else if (s === 403) alert("접근 권한이 없습니다. 🛑");
+            else alert("친구/요청 데이터를 불러오지 못했습니다.");
+        //console.error("친구 목록 실패:", e?.response?.status, e?.response?.data || e?.message);
+        //alert("친구/요청 데이터를 불러오지 못했습니다.");
+        //setFriends([]);
+        //setRequests([]);
+        }
     })();
 }, []);
 
 
-    /*
-    const getAcceptedSet = () => new Set(JSON.parse(sessionStorage.getItem("accepted_ids") || "[]")); 
-    const getRejectedSet = () => new Set(JSON.parse(sessionStorage.getItem("rejected_ids") || "[]"));
-    const getDeletedSet = () => new Set(JSON.parse(sessionStorage.getItem("deleted_friend_ids") || "[]"));
-    const accepted = getAcceptedSet();  
-    const rejected = getRejectedSet();
-    const deleted = getDeletedSet(); */
     
     const acceptRequest = async (requestId) => {
         const target = requests.find((r) => r.requestId === requestId);
@@ -104,10 +109,11 @@ export default function FriendListPage() {
         setRequests((prev) => prev.filter((r) => r.requestId !== requestId));
         setFriends((prev) => [...prev.filter((p) => p.id !== target.user,id), target.user]);
         try {
-            await axios.post(`${BASE}/api/friend-requests/${requestId}/accept`, null, { withCredentials: true });
+            await api.post(`api/friend-requests/${requestId}/accept`);
+            //await axios.post(`${BASE}/api/friend-requests/${requestId}/accept`, null, { withCredentials: true });
         } catch (e){
           // 롤백
-            setFriends((prev) => prev.filter((u) => u.id !== traget.user.id));
+            setFriends((prev) => prev.filter((u) => u.id !== target.user.id));
             setRequests((prev) =>[target,...prev]);
             alert("수락에 실패했습니다.");
         }
@@ -117,7 +123,8 @@ export default function FriendListPage() {
         const prevRequests = requests;
         setRequests((prev) => prev.filter((u) => u.requestId !== requestId));
         try {
-            await axios.post(`${BASE}/api/friends-requests/${requestId}/reject`, null, { withCredentials: true });
+            await api.post(`${BASE}/api/friend-requests/${requestId}/reject`); 
+            //await axios.post(`${BASE}/api/friend-requests/${requestId}/reject`, null, { withCredentials: true });
         } catch (e) {
             setRequests(prevRequests);
             alert("거절에 실패했습니다.");
