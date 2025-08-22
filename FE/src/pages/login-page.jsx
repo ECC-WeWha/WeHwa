@@ -12,6 +12,7 @@ import googleLogin from "../assets/images/googlelogin.png";
 
 //import axios from "axios";
 import {api} from "../api/client.js";
+//import { VerifiedUserOutlined } from "@mui/icons-material";
 //로그인 관련 백엔드 필요한거
 
 //카카오 로그인
@@ -20,7 +21,7 @@ import {api} from "../api/client.js";
 
 
 function LoginPage() {
-  const [username, setId] =useState(""); //백엔드에서 username으로 했는데 그럼 이름은 어떻게 처리할건지
+  const [userId, setId] =useState(""); //백엔드에서 username으로 했는데 그럼 이름은 어떻게 처리할건지
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
@@ -34,7 +35,7 @@ function LoginPage() {
     });
   };
 
-
+  /*
   const afterLogin = (res) => {
     if (res?.data?.status === "success") {
       const { token, userId } = res.data;
@@ -49,7 +50,7 @@ function LoginPage() {
   
 const handleLogin = async () => {
   try {
-    const res = await api.post("/api/auth/login", { username, password });
+    const res = await api.post("/api/auth/login", { userId, password });
     if (res.data?.status === "success") {
       const { token, userId } = res.data;
       if (token) localStorage.setItem("token", token);
@@ -69,59 +70,34 @@ const handleLogin = async () => {
     alert(err.response?.data?.message || "로그인 중 서버 오류가 발생했습니다.");
   }
 };
-
-/*
-  const handleLogin = async () => {
-    try {
-      
-      const res =
-      await axios.post(//이건 500오류가 나오고
-        "http://wewha.ap-northeast-2.elasticbeanstalk.com/api/auth/login",
-        { username, password },
-        { withCredentials: true }
-      );
-      );
-      await axios.post("http://wewha.ap-northeast-2.elasticbeanstalk.com/api/auth/login",
-        { username, password },
-        { headers: { "Content-Type": "application/json" } } // axios 기본이지만 명시
-      ); */
-      
-    
-
-    /*
-    if (res.data.status === "success") {
-      const { token, userId } = res.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("userId", userId);
-
-      navigate("/");
-    } else {
-      alert(res.data.message || "로그인 실패");
-    }
-  } catch (err) {
-      console.error("서버 오류", err);
-      alert("로그인 중 오류가 발생했습니다.");
-  } 
-};
-  if (res.data?.status === "success") {
-    const { token, userId } = res.data;
-    if (token) localStorage.setItem("token", token); // httpOnly 쿠키면 토큰이 안옵니다
-    if (userId) localStorage.setItem("userId", userId);
-    navigate("/");
-  } else {
-    alert(res.data?.message || "로그인 실패");
+*/
+  // afterLogin 재활용 + 분기 단일화
+const afterLogin = (data) => {
+  const ok = data?.status === "success" || data?.success === true;
+  if (!ok) {
+    alert(data?.message || "로그인 실패");
+    return false;
   }
-} catch (err) {
-// 어디로 갔고, 무엇이 왔는지 확인
-console.error("서버 오류", {
-  url: err.config?.url,
-  status: err.response?.status,
-  data: err.response?.data,
-});
-alert(err.response?.data?.message || "로그인 중 오류가 발생했습니다.");
-}
-}*/
+  const { token, userId } = data;
+  if (token) {
+    localStorage.setItem("token", token);
+    api.defaults.headers.common.Authorization = `Bearer ${token}`; // ★ 추가
+  }
+  if (userId) localStorage.setItem("userId", userId);
+  navigate("/", { replace: true });
+  return true;
+};
 
+const handleLogin = async () => {
+  try {
+    const res = await api.post("/api/auth/login", { userId, password });
+    console.log("login res", res.data);
+    afterLogin(res.data);
+  } catch (err) {
+    logErr(err, "JSON");
+    alert(err.response?.data?.message || "로그인 중 서버 오류가 발생했습니다.");
+  }
+};
 
 
   //const BACKEND_URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
@@ -155,7 +131,7 @@ alert(err.response?.data?.message || "로그인 중 오류가 발생했습니다
           <h2 className="label-title">아이디</h2>
           <InputBox
             placeholder="아이디 입력"
-            value={username}
+            value={userId}
             onChange={(e)=>setId(e.target.value)}></InputBox>
           <h2 className="label-title">비밀번호</h2>
           <InputBox 

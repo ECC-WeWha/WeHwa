@@ -4,7 +4,7 @@ import "../../styles/button.css";
 
 function GreenButton({ text, onClick , disabled}) {
   return (
-      <button className="green-button" onClick={onClick} disabled={disabled} >
+      <button type="button" className="green-button" onClick={onClick} disabled={disabled} >
         <span className="green-button-text">{text}</span>
       </button>
   );
