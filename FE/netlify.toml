@@ -1,12 +1,13 @@
 
-# /api/* 요청을 EB 서버로 프록시
+
+# /api/* -> Netlify Function (서버사이드 프록시)
 [[redirects]]
   from = "/api/*"
-  to = "http://wewha.ap-northeast-2.elasticbeanstalk.com/api/:splat"
+  to = "/.netlify/functions/api-proxy/:splat"
   status = 200
   force = true
 
-# 리액트 라우터(SPA) 라우팅용
+# SPA 라우팅
 [[redirects]]
   from = "/*"
   to = "/index.html"
