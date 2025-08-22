@@ -7,4 +7,5 @@ export const api = axios.create({
     baseURL: "",               // ← HTTPS 백엔드
     withCredentials: true,       // 쿠키 인증 쓰면 유지
     headers: { "Content-Type": "application/json" },
+    timeout: 15000,
 });

@@ -9,6 +9,7 @@ export default defineConfig({
       "/api": {
         target: "http://wewha.ap-northeast-2.elasticbeanstalk.com",
         changeOrigin: true,
+        secure: false,
       },
     },
   },

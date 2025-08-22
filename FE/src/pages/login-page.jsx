@@ -9,8 +9,9 @@ import InputBox from "../components/common/InputBox.jsx";
 import kakaoLogin from "../assets/images/kakaologin.png";
 import naverLogin from "../assets/images/naverlogin.png";
 import googleLogin from "../assets/images/googlelogin.png";
-import axios from "axios";
 
+//import axios from "axios";
+import {api} from "../api/client.js";
 //로그인 관련 백엔드 필요한거
 
 //카카오 로그인
@@ -26,7 +27,7 @@ function LoginPage() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post( `${BACKEND_URL}/api/auth/login`, {
+      const res = await api.post( "/api/auth/login", {
         username,
         password,
     });
@@ -45,7 +46,7 @@ function LoginPage() {
   } 
 };
 
-  const BACKEND_URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
+  //const BACKEND_URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
   const REST_API_KEY = import.meta.env.VITE_REACT_APP_REST_API_KEY;
   const REDIRECT_URI = import.meta.env.VITE_REACT_APP_REDIRECT_URI;
   const KAKAO_AUTH_URL =
