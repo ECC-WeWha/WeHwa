@@ -1,0 +1,15 @@
+[functions]
+  directory = "FE/netlify/functions"   # FE/ 를 기준으로 경로 인식
+
+# /api/* → Netlify Function 프록시
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api-proxy/:splat"
+  status = 200
+  force = true
+
+# SPA 라우팅 (항상 마지막)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
