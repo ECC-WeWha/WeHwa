@@ -24,13 +24,71 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  const logErr = (err, tag) => {
+    console.error(`서버 오류(${tag})`, {
+      url: err.config?.url,
+      method: err.config?.method,
+      req: err.config?.data,
+      status: err.response?.status,
+      res: err.response?.data,
+    });
+  };
 
+
+  const afterLogin = (res) => {
+    if (res?.data?.status === "success") {
+      const { token, userId } = res.data;
+      if (token) localStorage.setItem("token", token); // 명세: 본문 JWT
+      if (userId) localStorage.setItem("userId", userId);
+      navigate("/");
+      return true;
+    }
+    alert(res?.data?.message || "로그인 실패");
+    return false;
+  };
+  
+const handleLogin = async () => {
+  try {
+    const res = await api.post("/api/auth/login", { username, password });
+    if (res.data?.status === "success") {
+      const { token, userId } = res.data;
+      if (token) localStorage.setItem("token", token);
+      if (userId) localStorage.setItem("userId", userId);
+      navigate("/");
+    } else {
+      alert(res.data?.message || "로그인 실패");
+    }
+  } catch (err) {
+    console.error("서버 오류(JSON)", {
+      url: err.config?.url,
+      method: err.config?.method,
+      req: err.config?.data,
+      status: err.response?.status,
+      res: err.response?.data,
+    });
+    alert(err.response?.data?.message || "로그인 중 서버 오류가 발생했습니다.");
+  }
+};
+
+/*
   const handleLogin = async () => {
     try {
-      const res = await api.post( "/api/auth/login", {
-        username,
-        password,
-    });
+      
+      const res =
+      await axios.post(//이건 500오류가 나오고
+        "http://wewha.ap-northeast-2.elasticbeanstalk.com/api/auth/login",
+        { username, password },
+        { withCredentials: true }
+      );
+      );
+      await axios.post("http://wewha.ap-northeast-2.elasticbeanstalk.com/api/auth/login",
+        { username, password },
+        { headers: { "Content-Type": "application/json" } } // axios 기본이지만 명시
+      ); */
+      
+    
+
+    /*
     if (res.data.status === "success") {
       const { token, userId } = res.data;
       localStorage.setItem("token", token);
@@ -45,6 +103,26 @@ function LoginPage() {
       alert("로그인 중 오류가 발생했습니다.");
   } 
 };
+  if (res.data?.status === "success") {
+    const { token, userId } = res.data;
+    if (token) localStorage.setItem("token", token); // httpOnly 쿠키면 토큰이 안옵니다
+    if (userId) localStorage.setItem("userId", userId);
+    navigate("/");
+  } else {
+    alert(res.data?.message || "로그인 실패");
+  }
+} catch (err) {
+// 어디로 갔고, 무엇이 왔는지 확인
+console.error("서버 오류", {
+  url: err.config?.url,
+  status: err.response?.status,
+  data: err.response?.data,
+});
+alert(err.response?.data?.message || "로그인 중 오류가 발생했습니다.");
+}
+}*/
+
+
 
   //const BACKEND_URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
   const REST_API_KEY = import.meta.env.VITE_REACT_APP_REST_API_KEY;
