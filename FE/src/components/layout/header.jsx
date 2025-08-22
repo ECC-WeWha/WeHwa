@@ -12,14 +12,35 @@ function Header() {
   const [userId, setUserId] = useState(""); //이것도 백엔드랑 이름 바뀌면 바뀌는거여
   const navigate = useNavigate();
   //로그인 상태 확인용 -> 그래야 바뀌지  //+지금 당장은 확인 불가능
-    useEffect(() => {
+  /*
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const savedId = localStorage.getItem("userId");
+    if (token) {
+      setIsLoggedIn(true);
+      setUserId(savedId || "");
+    } else {
+      setIsLoggedIn(false);
+      setUserId("");
+    }
+  }, [localStorage.getItem("token")]); 
+  */
+  useEffect(() => {
+    const syncLogin = () => {
       const token = localStorage.getItem("token");
       const savedId = localStorage.getItem("userId");
       if (token) {
         setIsLoggedIn(true);
         setUserId(savedId || "");
+      } else {
+        setIsLoggedIn(false);
+        setUserId("");
       }
-    }, []);
+    };
+    window.addEventListener("storage", syncLogin);
+    syncLogin(); // 초기 1회 실행
+    return () => window.removeEventListener("storage", syncLogin);
+  }, []);
 
   const handleLoginBoxClick = () => {
     if (isLoggedIn) {

@@ -5,31 +5,7 @@ import FriendListSidebar from "../components/sidebar/friend-list-sidebar.jsx";
 import { useMatch, useNavigate } from "react-router-dom";
 //import axios from "axios";
 import {api} from "../api/client.js";
-/*
-const FRIENDS = [
-    { 
-        id: 2, 
-        name: "Angella", 
-        langs: ["English"], 
-        country: "United States", 
-        bio: "Hi, I'm Angella! Let's be friends", 
-        tags: ["미국", "컴퓨터공학", "친목"], 
-        img: `/images/profile-2.jpg`
-    },
-]
-;
-const REQUESTS = [
-    { 
-        id: 6, 
-        name: "Heejin", 
-        langs: ["English", "Korean"], 
-        country: "United States", 
-        bio: "Hi, I'm Angella! Let's be friends", 
-        tags: ["태국", "컴퓨터공학", "친목"], 
-        img: `/images/profile-6.jpg`
-        },
-]
-*/ //다 버리기엔 아까워서 하나씩만 남겨놓
+
 const border = "#ffffff";
 //const BASE = (import.meta.env.VITE_REACT_APP_BACKEND_URL || "").replace(/\/+$/, "");
 

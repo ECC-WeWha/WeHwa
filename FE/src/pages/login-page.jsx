@@ -9,8 +9,10 @@ import InputBox from "../components/common/InputBox.jsx";
 import kakaoLogin from "../assets/images/kakaologin.png";
 import naverLogin from "../assets/images/naverlogin.png";
 import googleLogin from "../assets/images/googlelogin.png";
-import axios from "axios";
 
+//import axios from "axios";
+import {api} from "../api/client.js";
+//import { VerifiedUserOutlined } from "@mui/icons-material";
 //로그인 관련 백엔드 필요한거
 
 //카카오 로그인
@@ -19,33 +21,86 @@ import axios from "axios";
 
 
 function LoginPage() {
-  const [username, setId] =useState(""); //백엔드에서 username으로 했는데 그럼 이름은 어떻게 처리할건지
+  const [userId, setId] =useState(""); //백엔드에서 username으로 했는데 그럼 이름은 어떻게 처리할건지
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-
-  const handleLogin = async () => {
-    try {
-      const res = await axios.post( `${BACKEND_URL}/api/auth/login`, {
-        username,
-        password,
+  const logErr = (err, tag) => {
+    console.error(`서버 오류(${tag})`, {
+      url: err.config?.url,
+      method: err.config?.method,
+      req: err.config?.data,
+      status: err.response?.status,
+      res: err.response?.data,
     });
-    if (res.data.status === "success") {
-      const { token, userId } = res.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("userId", userId);
+  };
 
+  /*
+  const afterLogin = (res) => {
+    if (res?.data?.status === "success") {
+      const { token, userId } = res.data;
+      if (token) localStorage.setItem("token", token); // 명세: 본문 JWT
+      if (userId) localStorage.setItem("userId", userId);
+      navigate("/");
+      return true;
+    }
+    alert(res?.data?.message || "로그인 실패");
+    return false;
+  };
+  
+const handleLogin = async () => {
+  try {
+    const res = await api.post("/api/auth/login", { userId, password });
+    if (res.data?.status === "success") {
+      const { token, userId } = res.data;
+      if (token) localStorage.setItem("token", token);
+      if (userId) localStorage.setItem("userId", userId);
       navigate("/");
     } else {
-      alert(res.data.message || "로그인 실패");
+      alert(res.data?.message || "로그인 실패");
     }
   } catch (err) {
-      console.error("서버 오류", err);
-      alert("로그인 중 오류가 발생했습니다.");
-  } 
+    console.error("서버 오류(JSON)", {
+      url: err.config?.url,
+      method: err.config?.method,
+      req: err.config?.data,
+      status: err.response?.status,
+      res: err.response?.data,
+    });
+    alert(err.response?.data?.message || "로그인 중 서버 오류가 발생했습니다.");
+  }
+};
+*/
+  // afterLogin 재활용 + 분기 단일화
+const afterLogin = (data) => {
+  const ok = data?.status === "success" || data?.success === true;
+  if (!ok) {
+    alert(data?.message || "로그인 실패");
+    return false;
+  }
+  const { token, userId } = data;
+  if (token) {
+    localStorage.setItem("token", token);
+    api.defaults.headers.common.Authorization = `Bearer ${token}`; // ★ 추가
+  }
+  if (userId) localStorage.setItem("userId", userId);
+  navigate("/", { replace: true });
+  return true;
 };
 
-  const BACKEND_URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
+const handleLogin = async () => {
+  try {
+    const res = await api.post("/api/auth/login", { userId, password });
+    console.log("login res", res.data);
+    afterLogin(res.data);
+  } catch (err) {
+    logErr(err, "JSON");
+    alert(err.response?.data?.message || "로그인 중 서버 오류가 발생했습니다.");
+  }
+};
+
+
+  //const BACKEND_URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
   const REST_API_KEY = import.meta.env.VITE_REACT_APP_REST_API_KEY;
   const REDIRECT_URI = import.meta.env.VITE_REACT_APP_REDIRECT_URI;
   const KAKAO_AUTH_URL =
@@ -76,7 +131,7 @@ function LoginPage() {
           <h2 className="label-title">아이디</h2>
           <InputBox
             placeholder="아이디 입력"
-            value={username}
+            value={userId}
             onChange={(e)=>setId(e.target.value)}></InputBox>
           <h2 className="label-title">비밀번호</h2>
           <InputBox 
