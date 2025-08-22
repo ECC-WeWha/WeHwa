@@ -1,26 +1,35 @@
-// netlify/functions/api-proxy.js
-export default async (event, context) => {
-    const EB = "http://wewha.ap-northeast-2.elasticbeanstalk.com"; // EB는 http
-    // /api/auth/login -> /auth/login 형태면 필요에 따라 가공
-    const downstream = `${EB}${event.path}`; // 지금은 EB도 /api/... 쓰므로 그대로 전달
-  
+// CommonJS 핸들러(중요)
+const EB = "http://wewha.ap-northeast-2.elasticbeanstalk.com"; // 지금은 http
+
+exports.handler = async (event) => {
+  try {
+    // "/.netlify/functions/api-proxy/..." 접두어 제거
+    const prefix = "/.netlify/functions/api-proxy";
+    const splat = event.path.startsWith(prefix)
+      ? event.path.slice(prefix.length) // 예: "/auth/login"
+      : event.path;
+
+    // EB가 /api 프리픽스 사용 → /api + splat
+    const url = `${EB}/api${splat}${event.rawQuery ? `?${event.rawQuery}` : ""}`;
+
     const init = {
       method: event.httpMethod,
       headers: {
-        // 원본 Origin/Host 제거 효과: CORS 영향 최소화
         "Content-Type": event.headers["content-type"] || "application/json",
         "Authorization": event.headers["authorization"] || "",
       },
-      body: ["GET", "HEAD"].includes(event.httpMethod) ? undefined : event.body,
+      body: ["GET","HEAD"].includes(event.httpMethod) ? undefined : event.body,
     };
-  
-    const resp = await fetch(downstream, init);
+
+    const resp = await fetch(url, init);
     const text = await resp.text();
-  
+
     return {
       statusCode: resp.status,
       headers: { "Content-Type": resp.headers.get("content-type") || "application/json" },
       body: text,
     };
-  };
-  
+  } catch (e) {
+    return { statusCode: 502, body: JSON.stringify({ message: "Proxy error", error: String(e) }) };
+  }
+};
