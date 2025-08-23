@@ -33,24 +33,6 @@ function LoginPage() {
       res: err.response?.data,
     });
   };
-
-  /*
- const afterLogin = (data) => {
-  const ok = data?.status === "success" || data?.success === true;
-  if (!ok) {
-    alert(data?.message || "로그인 실패");
-    return false;
-  }
-  const { token, userId } = data;
-  if (token) {
-    localStorage.setItem("token", token);
-    api.defaults.headers.common.Authorization = `Bearer ${token}`; // ★ 추가
-  }
-  if (userId) localStorage.setItem("userId", userId);
-  navigate("/", { replace: true });
-  return true;
-};
-*/
   // afterLogin 재활용 + 분기 단일화
   const { login } = useAuth();
 
@@ -63,8 +45,8 @@ function LoginPage() {
       return false;
     }
     // LoginPage.jsx
-    const token = data?.accessToken;
-    const userId = data?.userId;
+    const token = data.accessToken;
+    const userId = data.userId;
   
     if (!token || !userId) {
       alert("로그인 응답에 토큰 또는 유저ID가 없습니다.");
@@ -72,7 +54,7 @@ function LoginPage() {
     }
   
     login(token, userId);
-    api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    //api.defaults.headers.common.Authorization = `Bearer ${token}`;
     console.log("로그인 성공, 홈으로 이동합니다");
   
     navigate("/", { replace: true });
@@ -84,7 +66,7 @@ const handleLogin = async () => {
   try {
     const res = await api.post("/api/auth/login", { userId, password });
     const token = res.data?.accessToken;
-    localStorage.setItem("accessToken", token)
+    //localStorage.setItem("accessToken", token)
     console.log("login res", res.data);
     afterLogin(res.data);
   } catch (err) {

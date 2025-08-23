@@ -194,7 +194,7 @@ export default function FriendListDetail() {
         try {
         setProcessing(true);
         // TODO: 수락 API 호출
-        // await api.acceptFriend(user.id)
+        await api.post(`/api/friend-requests/${user.id}/accept`);
         alert("친구 요청을 수락했습니다.");
         pushId("accepted_ids", user.id);
         navigate("/friendlist", { replace: true }); 
@@ -206,7 +206,7 @@ export default function FriendListDetail() {
         try {
         setProcessing(true);
         // TODO: 거절 API 호출
-        // await api.rejectFriend(user.id)
+        await api.post(`/api/friend-requests/${user.id}/reject`);
         alert("친구 요청을 거절했습니다.");
         pushId("rejected_ids", user.id);
         navigate("/friendlist/requests", { replace: true });
@@ -217,6 +217,7 @@ export default function FriendListDetail() {
     const handleDeleteFriend = async () => {
         try {
         setProcessing(true);
+        await api.delete(`/api/friends/${user.id}`);
           // await api.deleteFriend(user.id)
         alert("친구를 삭제했습니다.");
         pushId("deleted_friend_ids", user.id);      

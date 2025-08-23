@@ -7,7 +7,7 @@ import languageImage from "../../assets/images/lang.png";
 import alarmImage from "../../assets/images/alarm.png";
 import profileImage from "../../assets/images/profile.png";
 
-import { useAuth } from "../layout/AuthContext";
+import { useAuth } from "../layout/AuthContext.jsx";
 
 function Header() {
   const { user, logout } = useAuth();
