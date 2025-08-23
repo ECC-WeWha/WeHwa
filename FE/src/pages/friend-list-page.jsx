@@ -47,8 +47,9 @@ export default function FriendListPage() {
         (async () => {
         try {
         const [fRes, rRes] = await Promise.all([
-            api.get("/api/friends"),
-            api.get("/api/friend-requests")
+            api.get("/api/friends", { withCredentials: true })
+            //api.get("/api/friends"),
+            //api.get("/api/friend-requests")
             //axios.get(`${BASE}/api/friends`, {withCredentials: true }),
             //axios.get(`${BASE}/api/friend-requests`, { withCredentials: true }),
         ]);
@@ -85,7 +86,7 @@ export default function FriendListPage() {
         setRequests((prev) => prev.filter((r) => r.requestId !== requestId));
         setFriends((prev) => [...prev.filter((p) => p.id !== target.user,id), target.user]);
         try {
-            await api.post(`api/friend-requests/${requestId}/accept`);
+            await api.post(`/api/friend-requests/${requestId}/accept`);
             //await axios.post(`${BASE}/api/friend-requests/${requestId}/accept`, null, { withCredentials: true });
         } catch (e){
           // 롤백

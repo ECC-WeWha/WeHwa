@@ -2,8 +2,8 @@ import React ,{useMemo} from "react"
 import { useNavigate } from "react-router-dom";
 import GreenButton from "../../components/common/GreenButton";
 import "../../styles/signup.css";
-import axios from "axios";
-
+//import axios from "axios";
+import {api} from "../../api/client";
 
 function Step3Form({ formData, onChange,backStep}){
     const navigate = useNavigate();
@@ -27,17 +27,19 @@ function Step3Form({ formData, onChange,backStep}){
     return;
     }
     try {
-        const res = await axios.post(
-            "/api/signup", //백엔드의 경로//수정수정////////////////언젠가는/////
-            {
-            ...formData,
-            over14: !!formData.agreeAge,
-            marketing_opt_in: !!formData.agreeMarketing,
-            },
+        const payload = {  //여기서 뭔가 backend에서 필요한게 있을건데 뭔지 모르겠네ㅎ - 내일 아침에 물어보기 
+            userId : formData.userId,
+            //username: formData.username,
+            password: formData.password,
+        };
+        const res = await api.post(
+            "/api/auth/signup", payload
         );
         alert("회원가입이 완료되었습니다.");
         navigate("/login", { replace: true });
         } catch (err) {
+        console.log(err.response?.data);
+
         console.error(err);
         alert("회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
         }

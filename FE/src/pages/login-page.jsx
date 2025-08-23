@@ -10,14 +10,13 @@ import kakaoLogin from "../assets/images/kakaologin.png";
 import naverLogin from "../assets/images/naverlogin.png";
 import googleLogin from "../assets/images/googlelogin.png";
 
+import { useAuth } from "../components/layout/AuthContext.jsx";
+
+
 //import axios from "axios";
 import {api} from "../api/client.js";
 //import { VerifiedUserOutlined } from "@mui/icons-material";
 //로그인 관련 백엔드 필요한거
-
-//카카오 로그인
-// 1.백엔드 서버 관련 .env수정 2.kakaoredirection고치기 3.받는 api형식 확인 
-//카카오 로그인 관련 백엔드의 끝내는 api
 
 
 function LoginPage() {
@@ -36,43 +35,7 @@ function LoginPage() {
   };
 
   /*
-  const afterLogin = (res) => {
-    if (res?.data?.status === "success") {
-      const { token, userId } = res.data;
-      if (token) localStorage.setItem("token", token); // 명세: 본문 JWT
-      if (userId) localStorage.setItem("userId", userId);
-      navigate("/");
-      return true;
-    }
-    alert(res?.data?.message || "로그인 실패");
-    return false;
-  };
-  
-const handleLogin = async () => {
-  try {
-    const res = await api.post("/api/auth/login", { userId, password });
-    if (res.data?.status === "success") {
-      const { token, userId } = res.data;
-      if (token) localStorage.setItem("token", token);
-      if (userId) localStorage.setItem("userId", userId);
-      navigate("/");
-    } else {
-      alert(res.data?.message || "로그인 실패");
-    }
-  } catch (err) {
-    console.error("서버 오류(JSON)", {
-      url: err.config?.url,
-      method: err.config?.method,
-      req: err.config?.data,
-      status: err.response?.status,
-      res: err.response?.data,
-    });
-    alert(err.response?.data?.message || "로그인 중 서버 오류가 발생했습니다.");
-  }
-};
-*/
-  // afterLogin 재활용 + 분기 단일화
-const afterLogin = (data) => {
+ const afterLogin = (data) => {
   const ok = data?.status === "success" || data?.success === true;
   if (!ok) {
     alert(data?.message || "로그인 실패");
@@ -87,16 +50,48 @@ const afterLogin = (data) => {
   navigate("/", { replace: true });
   return true;
 };
+*/
+  // afterLogin 재활용 + 분기 단일화
+  const { login } = useAuth();
+
+  const afterLogin = (data) => {
+    console.log("afterLogin 호출됨", data);
+  
+    const ok = data?.message === "로그인 성공"; // 또는 다른 성공 조건
+    if (!ok) {
+      alert(data?.message || "로그인 실패");
+      return false;
+    }
+    // LoginPage.jsx
+    const token = data?.accessToken;
+    const userId = data?.userId;
+  
+    if (!token || !userId) {
+      alert("로그인 응답에 토큰 또는 유저ID가 없습니다.");
+      return false;
+    }
+  
+    login(token, userId);
+    api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    console.log("로그인 성공, 홈으로 이동합니다");
+  
+    navigate("/", { replace: true });
+    return true;
+  };
+
 
 const handleLogin = async () => {
   try {
     const res = await api.post("/api/auth/login", { userId, password });
+    const token = res.data?.accessToken;
+    localStorage.setItem("accessToken", token)
     console.log("login res", res.data);
     afterLogin(res.data);
   } catch (err) {
     logErr(err, "JSON");
     alert(err.response?.data?.message || "로그인 중 서버 오류가 발생했습니다.");
   }
+
 };
 
 
