@@ -52,9 +52,10 @@ function LoginPage() {
       alert("로그인 응답에 토큰 또는 유저ID가 없습니다.");
       return false;
     }
-  
+
     login(token, userId);
     //api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    
     console.log("로그인 성공, 홈으로 이동합니다");
   
     navigate("/", { replace: true });
@@ -66,7 +67,10 @@ const handleLogin = async () => {
   try {
     const res = await api.post("/api/auth/login", { userId, password });
     const token = res.data?.accessToken;
-    //localStorage.setItem("accessToken", token)
+    if (token) {
+      localStorage.setItem("accessToken", token);
+    }
+
     console.log("login res", res.data);
     afterLogin(res.data);
   } catch (err) {

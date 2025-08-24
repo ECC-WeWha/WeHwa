@@ -13,7 +13,8 @@ function Header() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const isLoggedIn = !!user?.token;
-  const displayUserId = user?.userId || ""; 
+  const displayUserId = user?.userId || "";
+  //const displayUserId = user?.userId || ""; 
   //로그인 상태 확인용 -> 그래야 바뀌지  //+지금 당장은 확인 불가능
   /*
   useEffect(() => {

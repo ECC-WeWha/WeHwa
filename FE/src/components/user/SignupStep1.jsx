@@ -48,10 +48,10 @@ function Step1Form({ formData, onChange, nextStep}){
         if (!formData.nickname) return "error";
         return "";
     }, [formData.nickname]);
-    const usernameError = useMemo(() => {
-        if (!formData.username) return "error";
+    const nameError = useMemo(() => {
+        if (!formData.name) return "error";
         return "";
-    }, [formData.username]);
+    }, [formData.name]);
     const emailError = useMemo(() => {
         if (!formData.email) return "error";
         return "";
@@ -65,7 +65,7 @@ function Step1Form({ formData, onChange, nextStep}){
     !!formData.password &&
     !!formData.passwordCheck &&
     !nicknameError &&
-    !usernameError &&
+    !nameError &&
     !emailError;
 
     return (
@@ -156,9 +156,9 @@ function Step1Form({ formData, onChange, nextStep}){
                 <div className="three center">
                     <InputBox
                         type="text"
-                        name="username"
+                        name="name"
                         placeholder=""
-                        value={formData.username}
+                        value={formData.name}
                         onChange={onChange}
                         style={{flex:"1"}}
                     />

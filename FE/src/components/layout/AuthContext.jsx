@@ -5,7 +5,7 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => ({
-    token: localStorage.getItem("token"),
+    token: localStorage.getItem("accessToken"),
     userId: localStorage.getItem("userId"),
   }));
   /*
@@ -16,12 +16,12 @@ export function AuthProvider({ children }) {
   };
 */
 const login = (token, userId) => {
-  localStorage.setItem("token", token);
+  localStorage.setItem("accessToken", token);
   localStorage.setItem("userId", userId);
   setUser({ token, userId }); // ✅ 이게 있어야 상태가 반영됨
 };
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
     localStorage.removeItem("userId");
     setUser({ token: null, userId: null });
   };

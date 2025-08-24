@@ -16,7 +16,7 @@ function SignupPage() {
     password: "",
     passwordCheck: "",
     nickname: "",
-    username: "",
+    name: "",
     email: "",
     nationality: "",
     studentStatus: "",

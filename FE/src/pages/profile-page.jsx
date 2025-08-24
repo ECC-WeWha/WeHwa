@@ -8,26 +8,7 @@ import GreenButton from "../components/common/GreenButton.jsx";
 import {api} from "../api/client.js";
 
 export default function ProfilePage() {
-/*
-const USE_MOCK = TRUE;  
-const MOCK_PROFILE = {
-    userId: "nalinstaaa",
-    password: "password",
-    passwordCheck: "password",
-    nickname: "iamnalin",
-    username: "HEIMVICHIT NUNNALIN",
-    email: "nunnalin@ewha.ac.kr",
 
-    nationality: "Thailand",
-    studentStatus: "재학생",
-    grade: "3",
-    birthYear: "2002",
-
-    nativeLanguage: "Thai",
-    kakao: "https://open.kakao.com/o/test",
-    instagram: "",
-    bio:"HI this is for test"
-};*/
 const location = useLocation();
 const navigate = useNavigate(); 
 const [formData, setFormData] = useState({  //DB에서 받
@@ -35,7 +16,7 @@ const [formData, setFormData] = useState({  //DB에서 받
     password: "",
     passwordCheck: "",
     nickname: "",
-    username: "",
+    name: "",
     email: "",
 
     nationality: "",
@@ -62,18 +43,49 @@ useEffect(() => {
     // 2) 프로필 로딩
     let isMounted = true;
     (async () => {
-    try {
+        /*
+        try {
+
+            const res = await api.get("/api/users/me");
+            console.log("응답:", res.data); // 🔍 실제 응답 구조 확인
+        } catch (e) {
+            console.log(localStorage);
+            console.error("에러 전체:", e); // 🔍 전체 에러 객체 확인 // 🔥 에러 메시지 확인
+        }
+        */
+        try {
         setLoading(true);
         setError("");
 
         const res = await api.get("/api/users/me");
+        console.log("응답:", res.data); // 실제 구조 확인
+
         const data = res.data?.data ?? res.data;
-        
+        //const data = 
+        const mappedData = {
+            userId: data.userId,
+            email: data.email,
+            nickname: data.nickname,
+            name: data.name,
+            birthYear: data.birthYear,
+            studentStatus: data.status,
+            nationality: data.nationality,
+            grade: data.year,
+            major: data.major,                     // ✅ 추가
+            nativeLanguage: data.language,
+            studyLanguage: data.studyLanguage,     // ✅ 추가
+            kakao: data.kakaoId,
+            instagram: data.instaId,
+            bio: data.introduction,
+        };
         if (isMounted) {
-            setFormData(data);
-            setOriginalData(data);
+            setFormData(mappedData);
+            setOriginalData(mappedData);
         }
     } catch (e) {
+
+        console.log(localStorage);
+        console.error("에러 전체:", e);
         if (isMounted) setError(e.message || "로드 중 오류가 발생했습니다.");
     } finally {
         if (isMounted) setLoading(false);
@@ -101,6 +113,30 @@ const cancelEdit = () => { //취소(원상복구)
 };
 const onSubmit = async () => {
     try {
+      // 백엔드가 받는 필드만 골라서 payload로 구성
+        const payload = {
+        nickname: formData.nickname,
+        name: formData.name,
+        birthYear: formData.birthYear,
+        major: formData.major,
+        language: formData.language,
+        studyLanguage: formData.studyLanguage,
+        kakaoId: formData.kakaoId,
+        instaId: formData.instaId,
+        introduction: formData.introduction
+    };
+        await api.patch("/api/users/me", payload); // ✅ payload를 함께 보냄
+        alert("저장 완료");
+        setOriginalData(formData);
+        setIsEditing(false);
+        navigate("/profile");
+    } catch (e) {
+        alert(e.message || "저장 중 오류가 발생했습니다.");
+    }
+};
+/*
+const onSubmit = async () => {
+    try {
         await api.patch("/api/users/me");
         alert("저장 완료");
         setOriginalData(formData);
@@ -109,7 +145,7 @@ const onSubmit = async () => {
     } catch (e) {
     alert(e.message || "저장 중 오류가 발생했습니다.");
     }
-};
+};*/
 const fieldProps = (name) => ({  //이건 뭐시여
     name,
     value: formData[name] || "",
@@ -208,7 +244,7 @@ return (
         <Row label="비밀번호 확인" name="passwordCheck" type="password"  />
 
         <Row label="닉네임" name="nickname"  />
-        <Row label="이름" name="username"  />
+        <Row label="이름" name="name"  />
         <Row label="이메일" name="email" type="email"  />
 
         <Row label="국적" name="nationality" />

@@ -33,7 +33,7 @@ function Step3Form({ formData, onChange,backStep}){
             email:formData.email,
             password: formData.password,
             nickname:formData.nickname,
-            name:formData.username,
+            name:formData.name,
             academicStatusId:formData.studentStatus,
             year:formData.grade,
             birthYear: formData.birthYear,
