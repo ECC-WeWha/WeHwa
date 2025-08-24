@@ -2,8 +2,9 @@ import React ,{useMemo} from "react"
 import { useNavigate } from "react-router-dom";
 import GreenButton from "../../components/common/GreenButton";
 import "../../styles/signup.css";
-import axios from "axios";
-
+//import axios from "axios";
+import {api} from "../../api/client";
+import { YoutubeSearchedFor } from "@mui/icons-material";
 
 function Step3Form({ formData, onChange,backStep}){
     const navigate = useNavigate();
@@ -22,22 +23,30 @@ function Step3Form({ formData, onChange,backStep}){
     const canSubmit = !!formData.agreeAge; //필수동의 체크 여부
 
     const handleSignup = async () => {
+        console.log(formData)
         if (!canSubmit) {
         alert("필수약관에 동의해주세요");
     return;
     }
     try {
-        const res = await axios.post(
-            "/api/signup", //백엔드의 경로//수정수정////////////////언젠가는/////
-            {
-            ...formData,
-            over14: !!formData.agreeAge,
-            marketing_opt_in: !!formData.agreeMarketing,
-            },
+        const payload = {  //여기서 뭔가 backend에서 필요한게 있을건데 뭔지 모르겠네ㅎ - 내일 아침에 물어보기 
+            email:formData.email,
+            password: formData.password,
+            nickname:formData.nickname,
+            name:formData.username,
+            academicStatusId:formData.studentStatus,
+            year:formData.grade,
+            birthYear: formData.birthYear,
+            regionId:formData.nationality,
+        };
+        const res = await api.post(
+            "/api/auth/signup", payload
         );
         alert("회원가입이 완료되었습니다.");
         navigate("/login", { replace: true });
         } catch (err) {
+        console.log(err.response?.data);
+
         console.error(err);
         alert("회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
         }

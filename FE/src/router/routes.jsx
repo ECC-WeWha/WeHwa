@@ -26,7 +26,7 @@ export const router = createBrowserRouter([
     path: "/",
     element: <App />, // 공통 레이아웃 (맨위꺼 공통으로)
     children: [
-      { index : true , element: <HomePage /> }, //이거약간 수정
+      { path : "" , element: <HomePage /> }, //이거약간 수정
       { path: "login", element: <LoginPage /> },    
       {path: "signup", element: <SignupPage /> }, 
       {path : "profile", element: <ProfilePage/>}, 

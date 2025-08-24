@@ -5,10 +5,11 @@ import BoardNav from "../components/top-nav/top-nav.jsx";
 import ProfileSidebar from "../components/sidebar/profile-sidebar.jsx";
 import "../styles/signup.css";
 import GreenButton from "../components/common/GreenButton.jsx";
+import {api} from "../api/client.js";
 
 export default function ProfilePage() {
-
-const USE_MOCK = true;  //확인용 -> 실제 사용할떄는 false로 바꿔야 함
+/*
+const USE_MOCK = TRUE;  
 const MOCK_PROFILE = {
     userId: "nalinstaaa",
     password: "password",
@@ -26,7 +27,7 @@ const MOCK_PROFILE = {
     kakao: "https://open.kakao.com/o/test",
     instagram: "",
     bio:"HI this is for test"
-};
+};*/
 const location = useLocation();
 const navigate = useNavigate(); 
 const [formData, setFormData] = useState({  //DB에서 받
@@ -64,20 +65,10 @@ useEffect(() => {
     try {
         setLoading(true);
         setError("");
-        let data;
-        if (USE_MOCK) {
-            await new Promise((r) => setTimeout(r, 300));
-            data = MOCK_PROFILE;
-        } else {
-        const res = await fetch("/api/profile", {
-            method: "GET",
-            credentials: "include",
-            headers: { "Content-Type": "application/json" },
-        });
-        if (!res.ok) throw new Error("프로필 조회 실패");
-        const json = await res.json();
-        data = json.data ?? json;
-        }
+
+        const res = await api.get("/api/users/me");
+        const data = res.data?.data ?? res.data;
+        
         if (isMounted) {
             setFormData(data);
             setOriginalData(data);
@@ -110,27 +101,11 @@ const cancelEdit = () => { //취소(원상복구)
 };
 const onSubmit = async () => {
     try {
-    if (USE_MOCK) {
-        // 디자인 확인용 저장 시뮬레이션
-        await new Promise(r => setTimeout(r, 300));
-        alert("저장 완료(목업)"); // 실제 저장 대신
+        await api.patch("/api/users/me");
+        alert("저장 완료");
         setOriginalData(formData);
         setIsEditing(false);
         navigate("/profile");
-        return;
-    }
-      // 실제 API 호출
-    const res = await fetch("/api/profile", {
-        method: "PUT",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-    });
-    if (!res.ok) throw new Error("저장 실패");
-    alert("저장 완료");
-    setOriginalData(formData);
-    setIsEditing(false);
-    navigate("/profile");
     } catch (e) {
     alert(e.message || "저장 중 오류가 발생했습니다.");
     }

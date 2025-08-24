@@ -83,9 +83,9 @@ export default function FriendListPage() {
         if (!target) return;
         // UI 먼저 반영
         setRequests((prev) => prev.filter((r) => r.requestId !== requestId));
-        setFriends((prev) => [...prev.filter((p) => p.id !== target.user,id), target.user]);
+        setFriends((prev) => [...prev.filter((p) => p.id !== target.user.id), target.user]);
         try {
-            await api.post(`api/friend-requests/${requestId}/accept`);
+            await api.post(`/api/friend-requests/${requestId}/accept`);
             //await axios.post(`${BASE}/api/friend-requests/${requestId}/accept`, null, { withCredentials: true });
         } catch (e){
           // 롤백
@@ -99,7 +99,8 @@ export default function FriendListPage() {
         const prevRequests = requests;
         setRequests((prev) => prev.filter((u) => u.requestId !== requestId));
         try {
-            await api.post(`${BASE}/api/friend-requests/${requestId}/reject`); 
+            await api.post(`/api/friend-requests/${requestId}/reject`);
+            //await api.post(`${BASE}/api/friend-requests/${requestId}/reject`); 
             //await axios.post(`${BASE}/api/friend-requests/${requestId}/reject`, null, { withCredentials: true });
         } catch (e) {
             setRequests(prevRequests);
@@ -110,7 +111,7 @@ export default function FriendListPage() {
         const prevFriends = friends;
         setFriends((prev) => prev.filter((u) => u.id !== userId));
         try {
-            await axios.delete(`${BASE}/api/friends/${userId}`, { withCredentials: true });
+            await api.delete(`/api/friends/${userId}`);
         } catch {
             setFriends(prevFriends);
             alert("삭제에 실패했습니다.");
