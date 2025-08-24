@@ -22,6 +22,7 @@ function SignupPage() {
     studentStatus: "",
     grade: "",
     birthYear: "",
+    year:""
   });
 
   const handleChange = (e) => {

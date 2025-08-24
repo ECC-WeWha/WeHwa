@@ -28,13 +28,17 @@ function Step2Form({ formData, onChange, nextStep,backStep}){
                         onChange={onChange}
                         style={{flex:"1"}}
                         options={[
-                            {value: "Korea", label:"Korea"},
-                            {value: "America", label:"America"},
-                            {value: "Japan", label:"Japan"},
-                            {value: "China", label:"China"},
-                            {value: "Thailand", label:"Thailand"},
-                            {value: "French", label:"French"},
-                            {value: "Germany", label:"Germany"},
+                            {value: 410, label:"Korea"}, //순서는 모름 
+                            {value: 10, label:"USA"},
+                            {value: 3, label:"Japan"},
+                            {value: 5, label:"China"},
+                            {value: 8, label:"Canada"},
+                            {value: 6, label:"France"},
+                            {value: 9, label:"Germany"},
+                            {value: 4, label:"India"},
+                            {value: 11, label:"Mongolia"},
+                            {value: 2, label:"Russia"},
+                            {value: 7, label:"Vietnam"},
                         ]}/>
                 </div>
                 <div className="three right"></div>  {/*비워놓고*/}
@@ -50,9 +54,9 @@ function Step2Form({ formData, onChange, nextStep,backStep}){
                         value={formData.studentStatus}
                         onChange={onChange}
                         options={[
-                            { value: "재학생", label: "재학생" },
-                            { value: "졸업생", label: "졸업생" },
-                            { value: "기타", label: "기타" },
+                            { value: 1, label: "재학생" },//이렇게 하라는 걸까나..
+                            { value: 2, label: "졸업생" },
+                            { value: 3, label: "기타" },
                         ]}
                     />
                 </div>

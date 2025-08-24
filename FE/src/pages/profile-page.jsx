@@ -69,7 +69,8 @@ useEffect(() => {
             await new Promise((r) => setTimeout(r, 300));
             data = MOCK_PROFILE;
         } else {
-        const res = await fetch("/api/profile", {
+        
+        const res = await api.post("/api/users/me", {
             method: "GET",
             credentials: "include",
             headers: { "Content-Type": "application/json" },

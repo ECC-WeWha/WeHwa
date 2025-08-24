@@ -4,6 +4,7 @@ import GreenButton from "../../components/common/GreenButton";
 import "../../styles/signup.css";
 //import axios from "axios";
 import {api} from "../../api/client";
+import { YoutubeSearchedFor } from "@mui/icons-material";
 
 function Step3Form({ formData, onChange,backStep}){
     const navigate = useNavigate();
@@ -22,15 +23,21 @@ function Step3Form({ formData, onChange,backStep}){
     const canSubmit = !!formData.agreeAge; //필수동의 체크 여부
 
     const handleSignup = async () => {
+        console.log(formData)
         if (!canSubmit) {
         alert("필수약관에 동의해주세요");
     return;
     }
     try {
         const payload = {  //여기서 뭔가 backend에서 필요한게 있을건데 뭔지 모르겠네ㅎ - 내일 아침에 물어보기 
-            userId : formData.userId,
-            //username: formData.username,
+            email:formData.email,
             password: formData.password,
+            nickname:formData.nickname,
+            name:formData.username,
+            academicStatusId:formData.studentStatus,
+            year:formData.grade,
+            birthYear: formData.birthYear,
+            regionId:formData.nationality,
         };
         const res = await api.post(
             "/api/auth/signup", payload
