@@ -20,7 +20,8 @@ import {api} from "../api/client.js";
 
 
 function LoginPage() {
-  const [userId, setId] =useState(""); //백엔드에서 username으로 했는데 그럼 이름은 어떻게 처리할건지
+  ///const [userId, setId] =useState(""); //백엔드에서 username으로 했는데 그럼 이름은 어떻게 처리할건지
+  const [loginId, setLoginId] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
@@ -45,41 +46,55 @@ function LoginPage() {
       return false;
     }
     // LoginPage.jsx
-    const token = data.accessToken;
-    const userId = data.userId;
-  
-    if (!token || !userId) {
+    ///const token = data.accessToken;
+    const token = data?.accessToken || data?.token;
+    ////const userId = data.userId;
+    if (!token) {
+      alert(data?.message || "로그인 실패(토큰 없음)");
+      return false;
+      }
+     
+      const uid = data?.userId || data?.username || data?.email || null;
+      login(token, uid);
+    /*
+      if (!token || !userId) {
       alert("로그인 응답에 토큰 또는 유저ID가 없습니다.");
       return false;
     }
+    login(token, userId); */
 
-    login(token, userId);
-    //api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    
     console.log("로그인 성공, 홈으로 이동합니다");
-  
     navigate("/", { replace: true });
     return true;
   };
 
-
 const handleLogin = async () => {
   try {
-    const res = await api.post("/api/auth/login", { userId, password });
+    //const res = await api.post("/api/auth/login", { userId, password });
+    const res = await api.post("/api/auth/login", { loginId, password });
+    /*
     const token = res.data?.accessToken;
     if (token) {
       localStorage.setItem("accessToken", token);
     }
-
     console.log("login res", res.data);
     afterLogin(res.data);
   } catch (err) {
     logErr(err, "JSON");
     alert(err.response?.data?.message || "로그인 중 서버 오류가 발생했습니다.");
+  }*/
+    const serverLoginId = res.data?.loginId ?? loginId;
+    const serverUserId  = res.data?.userId  ?? null;
+
+    localStorage.setItem("accessToken", token);
+    localStorage.setItem("loginId", serverLoginId);
+    if (serverUserId) localStorage.setItem("userId", serverUserId);
+
+    afterLogin({ ...res.data, accessToken: token, loginId: serverLoginId, userId: serverUserId });
+  } catch (err) {
+    alert(err.response?.data?.message || "로그인 중 오류");
   }
-
 };
-
 
   //const BACKEND_URL = import.meta.env.VITE_REACT_APP_BACKEND_URL;
   const REST_API_KEY = import.meta.env.VITE_REACT_APP_REST_API_KEY;
@@ -112,8 +127,11 @@ const handleLogin = async () => {
           <h2 className="label-title">아이디</h2>
           <InputBox
             placeholder="아이디 입력"
-            value={userId}
-            onChange={(e)=>setId(e.target.value)}></InputBox>
+            ///value={userId}
+            value = {loginId}
+            ///onChange={(e)=>setId(e.target.value)}></InputBox>
+            onChange={(e)=>setLoginId(e.target.value)}></InputBox>
+            
           <h2 className="label-title">비밀번호</h2>
           <InputBox 
             placeholder="비밀번호 입력"

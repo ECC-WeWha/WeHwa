@@ -7,6 +7,8 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => ({
     token: localStorage.getItem("accessToken"),
     userId: localStorage.getItem("userId"),
+    loginId: localStorage.getItem("loginId"),
+
   }));
   /*
   const login = (token, userId) => {
@@ -14,16 +16,27 @@ export function AuthProvider({ children }) {
     if (userId) localStorage.setItem("userId", userId);
     setUser({ token, userId });
   };
-*/
+
 const login = (token, userId) => {
   localStorage.setItem("accessToken", token);
-  localStorage.setItem("userId", userId);
-  setUser({ token, userId }); // ✅ 이게 있어야 상태가 반영됨
+  ////localStorage.setItem("userId", userId);
+  ////setUser({ token, userId }); 
+  if (userId) localStorage.setItem("userId", userId);
+  setUser({ token, userId: userId || null })
+};*/
+const login = (token, ids = {}) => {
+  const { userId = null, loginId = null } = ids;
+  localStorage.setItem("accessToken", token);
+  if (loginId) localStorage.setItem("loginId", loginId);
+  if (userId)  localStorage.setItem("userId",  userId);
+  setUser({ token, userId, loginId });
 };
   const logout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userId");
-    setUser({ token: null, userId: null });
+    localStorage.removeItem("loginId");
+    //setUser({ token: null, loginId: null });
+    setUser({ token: null, userId: null ,loginId: null  });
   };
 
   const value = useMemo(() => ({ user, login, logout }), [user]);

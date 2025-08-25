@@ -4,7 +4,7 @@ import BoardNav from "../components/top-nav/top-nav.jsx";
 import FriendListSidebar from "../components/sidebar/friend-list-sidebar.jsx";
 import KakaoLink from "../assets/images/kakaologin.png";
 import InstaLink from "../assets/images/insta.png"
-
+import {api} from "../api/client.js";
 const green = "#00664F";
 const border = "#E9E9E9";
 const softText = "#6B6B6B";

@@ -35,6 +35,8 @@ api.interceptors.request.use((config) => {
     localStorage.getItem("token") ||
     sessionStorage.getItem("accessToken") ||
     sessionStorage.getItem("token");
+  
+    console.log("토큰 확인:", token); // 추가
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

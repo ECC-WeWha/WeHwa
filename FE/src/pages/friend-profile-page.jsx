@@ -5,6 +5,9 @@ import RadioBox from "../components/common/Radio";
 import GreenButton from "../components/common/GreenButton";
 import { useNavigate } from "react-router-dom";   
 
+import { api } from "../api/client";
+//살려줘 살려줘
+
 function ProfileSetupPage() {
     const navigate = useNavigate();
 
@@ -22,6 +25,17 @@ function ProfileSetupPage() {
         [name]: type === "checkbox" ? checked : value,
         }));
     };
+    const handleSave = async () => {
+        try {
+            const response = await api.post("/api/friend-matching/settings", formData);
+            console.log("프로필 설정 완료:", response.data);
+            navigate("/friendfind", { replace: true });
+        } catch (error) {
+            console.error("프로필 설정 실패:", error);
+            alert("프로필 설정 중 오류가 발생했습니다. 로그인 상태를 확인해주세요.");
+        }
+    };
+    /*
     const handleSave = () => {
 
         fetch(`${import.meta.env.VITE_API_BASE_URL}/friend-match/settings/me`, {
@@ -31,7 +45,7 @@ function ProfileSetupPage() {
         });
 
         navigate("/friendfind", { replace: true });
-    };
+    };*/
     
 return (
     <div style={{display:"flex",width:"737px",marginTop:"250px",marginLeft:"330px",flexDirection: "column",gap:"60px" }}>

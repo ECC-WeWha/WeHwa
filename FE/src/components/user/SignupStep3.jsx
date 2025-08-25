@@ -21,6 +21,11 @@ function Step3Form({ formData, onChange,backStep}){
         setField("agreeMarketing", checked);
     };
     const canSubmit = !!formData.agreeAge; //필수동의 체크 여부
+    /////////////
+    const toNumberOrOmit = (v) => (v === "" || v == null ? undefined : Number(v));
+    const addIfDefined = (obj, key, val) => {
+      if (val !== undefined) obj[key] = val;
+    }; ////////////
 
     const handleSignup = async () => {
         console.log(formData)
@@ -28,7 +33,27 @@ function Step3Form({ formData, onChange,backStep}){
         alert("필수약관에 동의해주세요");
     return;
     }
+    if (!formData.userId || !formData.password || !formData.name || !formData.email) {
+        alert("아이디/비밀번호/이름/이메일은 필수입니다."); return;
+      }
+    
+      const payload = {
+        loginId:   formData.userId,
+        password: formData.password,
+        name:     formData.name,
+        nickname: formData.nickname,
+        email:    formData.email,
+      };
+      // ✅ 선택값: 숫자일 때만 추가(문자/빈값이면 아예 보내지 않음)
+      addIfDefined(payload, "academicStatusId", toNumberOrOmit(formData.studentStatus)); // "2" → 2, "" → 제외
+      addIfDefined(payload, "regionId",        toNumberOrOmit(formData.nationality));
+      addIfDefined(payload, "year",            toNumberOrOmit(formData.year));       // ← grade 말고 year 사용
+      addIfDefined(payload, "birthYear",       toNumberOrOmit(formData.birthYear));
+    
+      console.log("[signup payload]", payload,
+                  typeof payload.academicStatusId, typeof payload.regionId);
     try {
+        /*
         const payload = {  //여기서 뭔가 backend에서 필요한게 있을건데 뭔지 모르겠네ㅎ - 내일 아침에 물어보기 
             email:formData.email,
             password: formData.password,
@@ -41,14 +66,19 @@ function Step3Form({ formData, onChange,backStep}){
         };
         const res = await api.post(
             "/api/auth/signup", payload
-        );
+        );*/
+        await api.post("/api/auth/signup", payload);
         alert("회원가입이 완료되었습니다.");
         navigate("/login", { replace: true });
         } catch (err) {
         console.log(err.response?.data);
-
-        console.error(err);
-        alert("회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
+        console.error("signup error", {
+            url: err.config?.url,
+            status: err.response?.status,
+            res: err.response?.data,
+        });
+        /////console.error(err);
+        //////alert("회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.");
         }
     };
     return (

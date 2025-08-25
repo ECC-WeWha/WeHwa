@@ -13,6 +13,7 @@ function SignupPage() {
   
   const [formData, setFormData] = useState({ //저장할 데이터들 회원가입 완료 되면 한번에 전송할 데이터
     userId: "",
+    //loginId:"",
     password: "",
     passwordCheck: "",
     nickname: "",

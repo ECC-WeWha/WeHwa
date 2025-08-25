@@ -55,7 +55,7 @@ function Step2Form({ formData, onChange, nextStep,backStep}){
                         onChange={onChange}
                         options={[
                             { value: "1", label: "재학생" },//이렇게 하라는 걸까나..
-                            { value: "2", label: "졸업생" },
+                            { value: '2', label: "졸업생" },
                             { value: "3", label: "기타" },
                         ]}
                     />
