@@ -1,42 +1,27 @@
-// src/api/client.js
-/*
+// client.js
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "",                      // 상대경로 → 프록시 사용
+  baseURL:"http://wewha.ap-northeast-2.elasticbeanstalk.com", // ✅ 상대경로(빈 문자열)
+  headers: { "Content-Type": "application/json", Accept: "application/json" },
+  timeout: 15000,
+  withCredentials: false,
+});
+/*
+export const api = axios.create({
+  baseURL: "http://localhost:8080",                      // 상대경로 → 프록시 사용
   headers: { "Content-Type": "application/json" },
   timeout: 15000,
   withCredentials: true,
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("accessToken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-
-*/
-// client.js
-import axios from "axios";
-
-export const api = axios.create({
-  baseURL: "", // ✅ 상대경로(빈 문자열)
-  headers: { "Content-Type": "application/json", Accept: "application/json" },
-  timeout: 15000,
-  withCredentials: false,
-});
-
-
-api.interceptors.request.use((config) => {
-  const token =
-    localStorage.getItem("accessToken") ||
-    localStorage.getItem("token") ||
-    sessionStorage.getItem("accessToken") ||
-    sessionStorage.getItem("token");
-  
+    const token =
+      localStorage.getItem("accessToken") ||
+      localStorage.getItem("token") ||
+      sessionStorage.getItem("accessToken") ||
+      sessionStorage.getItem("token");
+    
     console.log("토큰 확인:", token); // 추가
 
   if (token) {
@@ -44,7 +29,28 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+*/
+api.interceptors.request.use((config) => {
+  // 1) 로그인/회원가입에는 Authorization 제거
+  const isAuthApi = (config.url || "").startsWith("/api/auth/");
+  if (!isAuthApi) {
+    const token =
+      localStorage.getItem("accessToken") ||
+      localStorage.getItem("token") ||
+      sessionStorage.getItem("accessToken") ||
+      sessionStorage.getItem("token");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    delete config.headers.Authorization;
+  }
 
+  // 2) 요청 로그(디버깅용)
+  console.log("[REQ]", (config.baseURL || "") + config.url, {
+    method: config.method,
+    body: config.data,
+  });
+  return config;
+});
 api.interceptors.response.use(
   (res) => res,
   (err) => {

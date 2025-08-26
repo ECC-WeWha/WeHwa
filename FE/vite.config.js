@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target:"http://localhost:8080",//"http://wewha.ap-northeast-2.elasticbeanstalk.com", // ← http
+        target:"http://wewha.ap-northeast-2.elasticbeanstalk.com",//"http://localhost:8080"
         changeOrigin: true,
         secure: false,
         configure: (proxy) => {

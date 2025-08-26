@@ -1,6 +1,7 @@
 // vite.config.js
 
 /*
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
@@ -10,7 +11,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:8080",//"http://wewha.ap-northeast-2.elasticbeanstalk.com", // ← http
+        target: "http://wewha.ap-northeast-2.elasticbeanstalk.com",// //"http://localhost:8080", ← http
         changeOrigin: true,
         secure: false,
         configure: (proxy) => {
@@ -25,7 +26,6 @@ export default defineConfig({
     },
   },
 });
-
 
 export default defineConfig({
   plugins: [react()],
