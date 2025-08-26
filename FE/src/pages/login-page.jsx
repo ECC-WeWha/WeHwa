@@ -83,8 +83,16 @@ const handleLogin = async () => {
     logErr(err, "JSON");
     alert(err.response?.data?.message || "로그인 중 서버 오류가 발생했습니다.");
   }*/
+ 
     const serverLoginId = res.data?.loginId ?? loginId;
     const serverUserId  = res.data?.userId  ?? null;
+    
+    
+    const token = res.data?.accessToken || res.data?.token;
+    if (!token) {
+      alert("로그인 실패: 토큰이 없습니다.");
+      return;
+    }
 
     localStorage.setItem("accessToken", token);
     localStorage.setItem("loginId", serverLoginId);
@@ -92,7 +100,9 @@ const handleLogin = async () => {
 
     afterLogin({ ...res.data, accessToken: token, loginId: serverLoginId, userId: serverUserId });
   } catch (err) {
+    console.error("로그인 실패 응답:", err.response?.data);
     alert(err.response?.data?.message || "로그인 중 오류");
+
   }
 };
 

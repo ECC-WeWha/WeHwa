@@ -23,11 +23,12 @@ api.interceptors.request.use((config) => {
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "", // 상대경로 → Netlify redirects로 프록시
-  headers: { "Content-Type": "application/json", "Accept": "application/json" },
+  baseURL: "", // ✅ 상대경로(빈 문자열)
+  headers: { "Content-Type": "application/json", Accept: "application/json" },
   timeout: 15000,
-   withCredentials: false, // 쿠키 인증 안 쓰면 false로 단순화 (CORS 이슈 줄이기)
+  withCredentials: false,
 });
+
 
 api.interceptors.request.use((config) => {
   const token =

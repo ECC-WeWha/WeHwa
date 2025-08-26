@@ -115,9 +115,25 @@ exports.handler = async (event) => {
     };
 
     const resp = await fetch(targetUrl, init);
+    const text = await resp.text();
+
+    const outHeaders = {};
+    resp.headers.forEach((v, k) => {
+      if (!["transfer-encoding", "connection"].includes(k.toLowerCase())) {
+        outHeaders[k] = v;
+      }
+    });
+    outHeaders["x-proxy-target"] = targetUrl;                 // ← 프록시 목적지 표시
+    outHeaders["access-control-expose-headers"] =             // ← JS에서 읽고 싶으면 노출
+      (outHeaders["access-control-expose-headers"]
+        ? outHeaders["access-control-expose-headers"] + ", x-proxy-target"
+        : "x-proxy-target");
+
+    return { statusCode: resp.status, headers: outHeaders, body: text };
 
     // 4) 응답 헤더 전달
     // 기본 헤더
+    /*
     const outHeaders = {};
     resp.headers.forEach((v, k) => {
       // 보안상 위험할 수 있는 hop-by-hop 헤더는 제외
@@ -125,12 +141,11 @@ exports.handler = async (event) => {
         outHeaders[k] = v;
       }
     });
-    const text = await resp.text();
     return {
       statusCode: resp.status,
       headers: outHeaders,
       body: text,
-    };
+    };   */
   } catch (e) {
     return {
       statusCode: 502,
