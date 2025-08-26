@@ -6,7 +6,7 @@ import { useMatch, useNavigate } from "react-router-dom";
 //import axios from "axios";
 import {api} from "../api/client.js";
 const ENDPOINTS = {
-    friends: "/api/friends",
+    friends: "/api/friend-requests",
     requests: "/api/friend-requests/received",
     };
 const border = "#ffffff";
