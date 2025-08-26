@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 //살려줘 살려줘
 
+
 function ProfileSetupPage() {
     const navigate = useNavigate();
 
@@ -58,11 +59,16 @@ return (
                 placeholder=""
                 onChange={onChange}
                 options={[
-                { value: "english", label: "English" },
-                { value: "korean",  label: "Korean" },
-                { value: "japanese",label: "Japanese" },
-                { value: "chinese", label: "Chinese" },
-                { value: "thai",    label: "Thai" },
+                { value: "1", label: "English" },
+                { value: "2",  label: "Korean" },
+                { value: "3",label: "Japanese" },
+                { value: "4", label: "Chinese" },
+                { value: "10",    label: "Thai" },
+                { value: "5",    label: "French" },
+                { value: "6",    label: "German" },
+                { value: "7",    label: "Spanish" },
+                { value: "8",    label: "Vietnamese" },
+                { value: "9",    label: "Russian" },
                 ]} />
         </div>
         <div style={{display:"flex",justifyContent: "space-between",alignItems: "center"}}>
@@ -74,11 +80,16 @@ return (
                 placeholder=""
                 onChange={onChange}
                 options={[
-                { value: "english", label: "English" },
-                { value: "korean",  label: "Korean" },
-                { value: "japanese",label: "Japanese" },
-                { value: "chinese", label: "Chinese" },
-                { value: "thai",    label: "Thai" },
+                    { value: "1", label: "English" },
+                    { value: "2",  label: "Korean" },
+                    { value: "3",label: "Japanese" },
+                    { value: "4", label: "Chinese" },
+                    { value: "10",    label: "Thai" },
+                    { value: "5",    label: "French" },
+                    { value: "6",    label: "German" },
+                    { value: "7",    label: "Spanish" },
+                    { value: "8",    label: "Vietnamese" },
+                    { value: "9",    label: "Russian" },
                 ]}
                 
             />

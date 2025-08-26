@@ -1,9 +1,11 @@
 // src/pages/FriendMatchingPage.jsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import ProfileCard from "../components/board/profilecard.jsx";
 import BoardNav from "../components/top-nav/top-nav.jsx";
 import FindFriendSidebar from "../components/sidebar/friend-find-sidebar.jsx";
 import { useSearchParams, useNavigate } from "react-router-dom";
+
+import { api } from "../api/client";
 
 const USERS = [
     { 
@@ -73,7 +75,139 @@ const USERS = [
   ;
 
 const border = "#ffffff";
+export default function FriendFindPage() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [requested, setRequested] = useState(() => new Set());
+  const [langFilter, setLangFilter] = useState("Korean");
+  const [profiles, setProfiles] = useState([]);
+  const [usedMock, setUsedMock] = useState(false);
+  const abortRef = useRef();
 
+  // URL ?lang= 읽기
+  useEffect(() => {
+    const lang = searchParams.get("lang");
+    if (lang) setLangFilter(lang);
+  }, [searchParams]);
+
+  // API 호출
+  useEffect(() => {
+    if (abortRef.current) abortRef.current.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    (async () => {
+      try {
+        const res = await api.get("/api/friend-matching/profiles", {
+          params: { language: langFilter },
+          signal: controller.signal,
+        });
+        const arr = Array.isArray(res.data)
+          ? res.data
+          : (res.data?.content || res.data?.profiles || []);
+
+        const mapped = arr.map((p) => ({
+          id: p.id ?? p.userId ?? p.profileId ?? p.idx,
+          name: p.nickname ?? p.name ?? "",
+          langs: Array.isArray(p.languages) && p.languages.length > 0
+            ? p.languages
+            : [p.studyLanguage].filter(Boolean),
+          country: p.nationality ?? p.country ?? "",
+          bio: p.bio ?? p.intro ?? "",
+          tags: Array.isArray(p.tags) ? p.tags : [],
+          img: p.profileImageUrl ?? p.avatarUrl ?? "/images/default-profile.png",
+          _raw: p,
+        }));
+
+        setProfiles(mapped);
+        setUsedMock(false);
+      } catch (_) {
+        // 에러 시 메시지 없이 무시
+      }
+    })();
+
+    return () => controller.abort();
+  }, [langFilter]);
+
+  const visibleUsers = useMemo(() => {
+    if (langFilter === "All") return profiles;
+    return profiles.filter((u) =>
+      (u.langs || []).map((x) => (x || "").toLowerCase()).includes(langFilter.toLowerCase())
+    );
+  }, [profiles, langFilter]);
+
+  const toggleRequest = (id) => {
+    setRequested((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const openProfile = (user) => {
+    navigate(`/friendfind/${user.id}`, { state: { user } });
+  };
+
+  // 빈 목록 시 → 데모 버튼
+  const EmptyState = () => (
+    <div style={{ padding: 40, textAlign: "center" }}>
+      <div style={{ marginBottom: 16 }}>
+        조건에 맞는 프로필이 없습니다.
+      </div>
+      <button
+        type="button"
+        onClick={() => { setProfiles(USERS); setUsedMock(true); }}
+        style={{ padding: "8px 14px", borderRadius: 12, border: "1px solid #ddd", background: "#fff", cursor: "pointer" }}
+      >
+        데모 데이터 보기
+      </button>
+    </div>
+  );
+
+  return (
+    <>
+      <BoardNav active="match" />
+      <div style={{ maxWidth: "1440px", margin: "0 auto", padding: 50 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: 20 }}>
+          <FindFriendSidebar />
+          <section
+            style={{
+              background: "#ffffff",
+              border: `1px solid ${border}`,
+              borderRadius: 20,
+              padding: 0,
+            }}
+          >
+            {visibleUsers.length === 0 ? (
+              <EmptyState />
+            ) : (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+                  gap: 16,
+                }}
+              >
+                {visibleUsers.map((u) => (
+                  <ProfileCard
+                    key={u.id}
+                    user={u}
+                    requested={requested.has(u.id)}
+                    onToggleRequest={() => toggleRequest(u.id)}
+                    onClick={() => openProfile(u)}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
+      </div>
+      <div style={{ height: 40 }} />
+    </>
+  );
+}
+
+/*
 export default function FriendFindPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -141,4 +275,4 @@ export default function FriendFindPage() {
       <div style={{ height: 40 }} />
     </>
   );
-}
+}*/
