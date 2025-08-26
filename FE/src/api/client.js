@@ -2,7 +2,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL:"http://wewha.ap-northeast-2.elasticbeanstalk.com", // ✅ 상대경로(빈 문자열)
+  baseURL:"", // http://wewha.ap-northeast-2.elasticbeanstalk.com
   headers: { "Content-Type": "application/json", Accept: "application/json" },
   timeout: 15000,
   withCredentials: false,

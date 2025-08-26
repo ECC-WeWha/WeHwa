@@ -84,7 +84,7 @@ exports.handler = async (event) => {
 };*/
 // netlify/functions/api-proxy.js
 // ✅ 1) EB URL: 환경변수 우선, 없으면 하드코드 백업
-const EB = process.env.EB_URL || "http://wewha.ap-northeast-2.elasticbeanstalk.com";
+const EB = "http://wewha.ap-northeast-2.elasticbeanstalk.com";
 
 exports.handler = async (event) => {
   let targetUrl = "";
