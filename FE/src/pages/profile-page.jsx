@@ -27,7 +27,9 @@ const [formData, setFormData] = useState({  //DB에서 받
     nativeLanguage: "",
     kakao: "",
     instagram: "",
-    bio:""
+    bio:"",
+    studyLanguage: "",  
+    major: "",
 });  
 const green = "#00664F";
 const [originalData, setOriginalData] = useState(null); //취소 시 복구용
@@ -63,7 +65,7 @@ useEffect(() => {
         const data = res.data?.data ?? res.data;
         //const data = 
         const mappedData = {
-            userId: data.userId,
+            userId: data.loginId,
             email: data.email,
             nickname: data.nickname,
             name: data.name,
@@ -104,18 +106,29 @@ const onChange = (e) => {  //입력
 };
 const startEdit = () => {  //편집시작
     setIsEditing(true);
-    navigate("/profile?edit=1");
+    ///navigate("/profile?edit=1");
 };
 const cancelEdit = () => { //취소(원상복구)
     if (originalData) setFormData(originalData);
     setIsEditing(false);
-    navigate("/profile");
+    //navigate("/profile");
 };
 const onSubmit = async () => {
     try {
       // 백엔드가 받는 필드만 골라서 payload로 구성
         const payload = {
-        nickname: formData.nickname,
+            nickname:      formData.nickname,
+            name:          formData.name,
+            birthYear:     formData.birthYear,
+            nationality:   formData.nationality ,
+            year:          formData.grade  ,        
+            major:         formData.major,
+            language:      formData.nativeLanguage,
+            studyLanguage: formData.studyLanguage ,
+            kakaoId:       formData.kakao,
+            instaId:       formData.instagram,
+            introduction:  formData.bio,
+        /*nickname: formData.nickname,
         name: formData.name,
         birthYear: formData.birthYear,
         major: formData.major,
@@ -123,29 +136,18 @@ const onSubmit = async () => {
         studyLanguage: formData.studyLanguage,
         kakaoId: formData.kakaoId,
         instaId: formData.instaId,
-        introduction: formData.introduction
+        introduction: formData.introduction,*/
+
     };
         await api.patch("/api/users/me", payload); // ✅ payload를 함께 보냄
         alert("저장 완료");
         setOriginalData(formData);
         setIsEditing(false);
-        navigate("/profile");
+        //navigate("/profile"); 
     } catch (e) {
         alert(e.message || "저장 중 오류가 발생했습니다.");
     }
 };
-/*
-const onSubmit = async () => {
-    try {
-        await api.patch("/api/users/me");
-        alert("저장 완료");
-        setOriginalData(formData);
-        setIsEditing(false);
-        navigate("/profile");
-    } catch (e) {
-    alert(e.message || "저장 중 오류가 발생했습니다.");
-    }
-};*/
 const fieldProps = (name) => ({  //이건 뭐시여
     name,
     value: formData[name] || "",
@@ -229,20 +231,34 @@ return (
       {/* 메인만 스크롤 */}
     <main
         style={{
-        overflowY: "auto",
-        height: `calc(100vh - 64px)`,
+        //overflowY: "auto",
+        //height: `calc(100vh - 64px)`,
         padding: "24px 56px",
         }}
     >
-    <h2 style={{ fontSize: 40, fontWeight: "bold", color: green, margin: 0, position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
-            나의 프로필
-    </h2>
+    {/*<h2 style={{ fontSize: 40, fontWeight: "bold", color: green, margin: 0, position: "absolute", left: "50%", transform: "translateX(-50%)" }}>*/}
+    <h2 style={{ fontSize: 40, fontWeight: "bold", color: green, margin: 0, left: "50%",marginLeft:"500px", transform: "translateX(-50%)" }}>   
+    나의 프로필
+    </h2> 
     <div style={{ maxWidth: 720, marginTop:"100px"}}>
 
         <Row label="아이디" name="userId" />
+        <Row
+            label="비밀번호"
+            name="password"
+            type="password"
+            renderView={() => "비밀번호는 변경 시에만 입력 가능합니다."}
+            />
+        <Row
+            label="비밀번호 확인"
+            name="passwordCheck"
+            type="password"
+            renderView={() => "비밀번호는 변경 시에만 입력 가능합니다."}
+        />
+        {/*
         <Row label="비밀번호" name="password" type="password"  />
         <Row label="비밀번호 확인" name="passwordCheck" type="password"  />
-
+        */}
         <Row label="닉네임" name="nickname"  />
         <Row label="이름" name="name"  />
         <Row label="이메일" name="email" type="email"  />
