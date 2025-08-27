@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // <-- 1. useNavigate 훅 가져오기
+import { api } from "../api/client"; // <-- 2. axios 인스턴스 가져오기 (경로는 실제 파일 위치에 맞게 수정)
+import { useAuth } from "../components/layout/AuthContext.jsx";
+
+
 import BoardNav from "../components/top-nav/top-nav.jsx";
 import BoardSidebar from "../components/sidebar/sidebar.jsx";
 
@@ -15,8 +20,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { api } from "../api/client.js"; 
-import { useAuth } from "../components/layout/AuthContext.jsx";
+
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -306,6 +310,7 @@ function BoardCategorySelect({ options = [], value, onChange, disabled }) {
 }
 
 function BoardWrite() {
+  const navigate = useNavigate(); // <-- 3. navigate 함수 사용 준비
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [authorType, setAuthorType] = useState("id"); // "id" | "anon"
@@ -319,11 +324,10 @@ function BoardWrite() {
   const green = "#00664F";
 
   const multiOptions = [
-    { value: "홍보게시판", label: "홍보 게시판" },
-    { value: "자유게시판", label: "자유 게시판" },
-    { value: "여행게시판", label: "여행 게시판" },
-    { value: "맛집게시판", label: "맛집 게시판" },
-    { value: "국적게시판", label: "국적 게시판" },
+    { value: "홍보", label: "홍보 게시판" },
+    { value: "자유", label: "자유 게시판" },
+    { value: "여행", label: "여행 게시판" },
+    { value: "맛집", label: "맛집 게시판" },
   ];
   const nationalOptions = COUNTRIES_KO_EN.map(({ ko, en }) => ({
     value: ko,
@@ -354,103 +358,86 @@ function BoardWrite() {
   };
   const removeKeyword = (k) => setKeywords((prev) => prev.filter((x) => x !== k));
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   if (!title.trim() || !content.trim()) {
-  //     alert("제목/본문을 입력해 주세요.");
-  //     return;
-  //   }
-  //   if (!categoryType || !category) {
-  //     alert("게시판 유형과 게시판을 선택해 주세요.");
-  //     return;
-  //   }
-
-  //   const payload = {
-  //     title: title,
-  //     content: content,
-  //     category:category,             
-  //     keywords:keywords,              
-  //     anonymousAuthor: authorType === "anon", 
-  //   };
-
-  //   try {
-  //     const res = await api.post("/api/posts", payload, {
-  //       headers: { "Content-Type": "application/json" ,
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-  //     const data = res.data?.data ?? res.data;
-  //     console.log("POST created:", res.status, data);
-  //     alert("게시글이 성공적으로 등록되었습니다.");
-  //     //navigate(`/board/${data.postId}`, { state: data });
-  //   } catch (err) {
-  //     console.error("POST create error", {
-  //       url: err.config?.url,
-  //       status: err.response?.status,
-  //       res: err.response?.data,
-  //     });
-  //     alert(err.response?.data?.message || "게시글 등록 중 오류가 발생했습니다.");
-  //   }
-  // };
+  // ===================================================================
+  // 4. handleSubmit 함수를 API 연동 로직으로 전면 수정
+  // ===================================================================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    console.log("Checking state values before creating payload:", {
+      title,
+      content,
+      category,
+      keywords,
+      authorType,
+    });
   
+    // --- Validation checks ---
     if (!title.trim() || !content.trim()) {
-      alert("제목/본문을 입력해 주세요.");
+      alert("Please enter a title and content.");
+      return;
+    }
+
+    // --- 유효성 검사 ---
+    if (!title.trim() || !content.trim()) {
+      alert("제목과 본문을 모두 입력해 주세요.");
       return;
     }
     if (!categoryType || !category) {
-      alert("게시판 유형과 게시판을 선택해 주세요.");
+      alert("게시판 유형과 상세 게시판을 모두 선택해 주세요.");
       return;
     }
-  
-    // 1. FormData 생성
+
+    // --- 데이터 준비 (FormData) ---
     const formData = new FormData();
+
+    // 1. JSON 데이터 (payload) 생성
+    // 백엔드의 PostCreateRequest DTO와 필드가 일치해야 합니다.
     const payload = {
       title: title.trim(),
       content: content.trim(),
       category,
       keywords,
-      anonymousAuthor: authorType === "anon",
+      anonymous: authorType === "anon",
     };
-  
+
     formData.append(
       "postData",
       new Blob([JSON.stringify(payload)], { type: "application/json" })
     );
-  
+
     // 2. 이미지 파일 추가
     images.forEach((imageFile) => {
       formData.append("images", imageFile);
     });
-  
-    // 3. 토큰 불러오기
-    const token =
-      localStorage.getItem("accessToken") ||
-      localStorage.getItem("token") ||
-      sessionStorage.getItem("accessToken") ||
-      sessionStorage.getItem("token");
-  
-    // 4. endpoint 선택
+    
+    // 3. API 엔드포인트 선택
     const endpoint = categoryType === "national"
       ? "/api/national-posts"
+      // TODO: 백엔드에 맞게 수정 필요
       : "/api/posts";
-  
+
     try {
-      const response = await api.post(endpoint, formData, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-  
+      // --- API 호출 ---
+      // headers 부분은 interceptor가 자동으로 처리하므로 삭제합니다.
+      const response = await api.post(endpoint, formData);
+
       console.log("게시글 생성 성공:", response.data);
       alert("게시글이 성공적으로 등록되었습니다.");
-      navigate(`/board/BoardPage/${response.data.data.postId}`);
+
+      // 성공 후 상세 페이지로 이동 (응답 데이터 구조에 맞게 postId를 추출)
+      const newPostId = response.data?.data?.postId;
+      if (newPostId) {
+          navigate(`/board/${newPostId}`);
+      } else {
+          navigate("/board");
+      }
     } catch (error) {
       console.error("게시글 생성 실패:", error.response);
       alert(error.response?.data?.message || "게시글 등록 중 오류가 발생했습니다.");
     }
-  };
+  }
   
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#fff" }}>
@@ -462,7 +449,9 @@ function BoardWrite() {
             글쓰기
           </h2>
 
+          {/* form 태그에 onSubmit 연결 */}
           <form onSubmit={handleSubmit}>
+            {/* ... (폼 내부는 기존 코드와 동일) ... */}
             <div
               style={{
                 display: "grid",
@@ -659,7 +648,6 @@ function BoardWrite() {
                 </div>
               </div>
             </div>
-
             {/* Actions */}
             <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginTop: "28px" }}>
               <button
