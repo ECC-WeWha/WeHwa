@@ -167,6 +167,11 @@ export default function FriendListDetail() {
     const modeFromState = state?.mode; 
     const isRequests = matchRequestsByUrl || modeFromState === "requests";
 
+    const requestId =
+      state?.requestId ??
+      state?.user?._requestId ??
+    null; 
+
     const user = useMemo(() => {
         if (state?.user) return state.user;
         return {
@@ -184,8 +189,9 @@ export default function FriendListDetail() {
             "linear-gradient(135deg, rgba(255,124,142,0.9), rgba(255,189,125,0.9))",
         instagram: "https://instagram.com/test_account",
         kakao: "https://open.kakao.com/o/test",
+        _requestId: requestId,
         };
-    }, [state, id]);
+    }, [state, id, requestId]);
 
     const badges = useMemo(() => buildBadgesFromUser(user), [user]);
 
@@ -193,8 +199,9 @@ export default function FriendListDetail() {
     const handleAccept = async () => {
         try {
         setProcessing(true);
-        // TODO: 수락 API 호출
-        await api.post(`/api/friend-requests/${user.id}/accept`);
+        const rid = requestId ?? user._requestId ?? user.requestId ?? null;
+
+        await api.post(`/api/friend-requests/${rid ?? user.id}/accept`);
         alert("친구 요청을 수락했습니다.");
         pushId("accepted_ids", user.id);
         navigate("/friendlist", { replace: true }); 
@@ -205,8 +212,9 @@ export default function FriendListDetail() {
     const handleReject = async () => {
         try {
         setProcessing(true);
-        // TODO: 거절 API 호출
-        await api.post(`/api/friend-requests/${user.id}/reject`);
+        const rid = requestId ?? user._requestId ?? user.requestId ?? null;
+
+        await api.post(`/api/friend-requests/${rid ??user.id}/reject`);
         alert("친구 요청을 거절했습니다.");
         pushId("rejected_ids", user.id);
         navigate("/friendlist/requests", { replace: true });
