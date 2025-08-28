@@ -49,11 +49,7 @@ function BoardDetail() {
   const [scrapped, setScrapped] = useState(false);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [commentText, setCommentText] = useState("");
-  const [comments, setComments] = useState([
-    { id: 1, username: "user001", time: "2분 전", text: "정보 감사합니다!" },
-    { id: 2, username: "foodie22", time: "5분 전", text: "여기 꼭 가볼게요" },
-    { id: 3, username: "nalinishungry", time: "5분 전", text: "I will try!" },
-  ]);
+  const [comments, setComments] = useState([]);
 
   const toggleLike = () => {
     setLikeCount((c) => (liked ? c - 1 : c + 1));
