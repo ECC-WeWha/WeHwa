@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // <-- 1. useNavigate 훅 가져오기
-import { api } from "../api/client"; // <-- 2. axios 인스턴스 가져오기 (경로는 실제 파일 위치에 맞게 수정)
+import { useNavigate } from "react-router-dom";
+import { api } from "../api/client";
 import { useAuth } from "../components/layout/AuthContext.jsx";
-
 
 import BoardNav from "../components/top-nav/top-nav.jsx";
 import BoardSidebar from "../components/sidebar/sidebar.jsx";
@@ -20,7 +19,6 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -54,7 +52,7 @@ function ImageAdder({
 
   useEffect(() => {
     return () => files.forEach((f) => f.previewUrl && URL.revokeObjectURL(f.previewUrl));
-  }, []);
+  }, []); 
 
   const pushFiles = (incomingList) => {
     setError("");
@@ -207,76 +205,7 @@ function RadioOption({ id, label, value, checked, onChange, color = "#00664F", n
   );
 }
 
-const COUNTRIES_KO_EN = [
-  // Asia
-  { ko: "대한민국", en: "South Korea" }, { ko: "일본", en: "Japan" }, { ko: "중국", en: "China" },
-  { ko: "대만", en: "Taiwan" }, { ko: "홍콩", en: "Hong Kong" }, { ko: "마카오", en: "Macau" },
-  { ko: "몽골", en: "Mongolia" }, { ko: "태국", en: "Thailand" }, { ko: "베트남", en: "Vietnam" },
-  { ko: "필리핀", en: "Philippines" }, { ko: "말레이시아", en: "Malaysia" }, { ko: "싱가포르", en: "Singapore" },
-  { ko: "인도네시아", en: "Indonesia" }, { ko: "브루나이", en: "Brunei" }, { ko: "캄보디아", en: "Cambodia" },
-  { ko: "라오스", en: "Laos" }, { ko: "미얀마", en: "Myanmar" }, { ko: "인도", en: "India" },
-  { ko: "네팔", en: "Nepal" }, { ko: "방글라데시", en: "Bangladesh" }, { ko: "스리랑카", en: "Sri Lanka" },
-  { ko: "파키스탄", en: "Pakistan" }, { ko: "부탄", en: "Bhutan" }, { ko: "몰디브", en: "Maldives" },
-  { ko: "카자흐스탄", en: "Kazakhstan" }, { ko: "우즈베키스탄", en: "Uzbekistan" },
-  { ko: "키르기스스탄", en: "Kyrgyzstan" }, { ko: "타지키스탄", en: "Tajikistan" },
-  { ko: "투르크메니스탄", en: "Turkmenistan" }, { ko: "사우디아라비아", en: "Saudi Arabia" },
-  { ko: "아랍에미리트", en: "United Arab Emirates" }, { ko: "카타르", en: "Qatar" },
-  { ko: "바레인", en: "Bahrain" }, { ko: "쿠웨이트", en: "Kuwait" }, { ko: "오만", en: "Oman" },
-  { ko: "요르단", en: "Jordan" }, { ko: "레바논", en: "Lebanon" }, { ko: "이라크", en: "Iraq" },
-  { ko: "이란", en: "Iran" }, { ko: "이스라엘", en: "Israel" }, { ko: "팔레스타인", en: "Palestine" },
-  { ko: "터키", en: "Turkey" }, { ko: "키프로스", en: "Cyprus" }, { ko: "조지아", en: "Georgia" },
-  { ko: "아르메니아", en: "Armenia" }, { ko: "아제르바이잔", en: "Azerbaijan" },
-  // Americas
-  { ko: "미국", en: "United States" }, { ko: "캐나다", en: "Canada" }, { ko: "멕시코", en: "Mexico" },
-  { ko: "과테말라", en: "Guatemala" }, { ko: "엘살바도르", en: "El Salvador" }, { ko: "온두라스", en: "Honduras" },
-  { ko: "니카라과", en: "Nicaragua" }, { ko: "코스타리카", en: "Costa Rica" }, { ko: "파나마", en: "Panama" },
-  { ko: "쿠바", en: "Cuba" }, { ko: "자메이카", en: "Jamaica" }, { ko: "아이티", en: "Haiti" },
-  { ko: "도미니카공화국", en: "Dominican Republic" }, { ko: "트리니다드토바고", en: "Trinidad and Tobago" },
-  { ko: "바하마", en: "Bahamas" }, { ko: "브라질", en: "Brazil" }, { ko: "아르헨티나", en: "Argentina" },
-  { ko: "칠레", en: "Chile" }, { ko: "페루", en: "Peru" }, { ko: "콜롬비아", en: "Colombia" },
-  { ko: "우루과이", en: "Uruguay" }, { ko: "파라과이", en: "Paraguay" }, { ko: "에콰도르", en: "Ecuador" },
-  { ko: "볼리비아", en: "Bolivia" }, { ko: "베네수엘라", en: "Venezuela" }, { ko: "가이아나", en: "Guyana" },
-  { ko: "수리남", en: "Suriname" },
-  // Europe
-  { ko: "영국", en: "United Kingdom" }, { ko: "아일랜드", en: "Ireland" }, { ko: "프랑스", en: "France" },
-  { ko: "독일", en: "Germany" }, { ko: "이탈리아", en: "Italy" }, { ko: "스페인", en: "Spain" },
-  { ko: "포르투갈", en: "Portugal" }, { ko: "네덜란드", en: "Netherlands" }, { ko: "벨기에", en: "Belgium" },
-  { ko: "룩셈부르크", en: "Luxembourg" }, { ko: "스위스", en: "Switzerland" }, { ko: "오스트리아", en: "Austria" },
-  { ko: "체코", en: "Czechia" }, { ko: "슬로바키아", en: "Slovakia" }, { ko: "폴란드", en: "Poland" },
-  { ko: "헝가리", en: "Hungary" }, { ko: "덴마크", en: "Denmark" }, { ko: "노르웨이", en: "Norway" },
-  { ko: "스웨덴", en: "Sweden" }, { ko: "핀란드", en: "Finland" }, { ko: "아이슬란드", en: "Iceland" },
-  { ko: "에스토니아", en: "Estonia" }, { ko: "라트비아", en: "Latvia" }, { ko: "리투아니아", en: "Lithuania" },
-  { ko: "우크라이나", en: "Ukraine" }, { ko: "몰도바", en: "Moldova" }, { ko: "벨라루스", en: "Belarus" },
-  { ko: "러시아", en: "Russia" }, { ko: "루마니아", en: "Romania" }, { ko: "불가리아", en: "Bulgaria" },
-  { ko: "그리스", en: "Greece" }, { ko: "크로아티아", en: "Croatia" }, { ko: "슬로베니아", en: "Slovenia" },
-  { ko: "세르비아", en: "Serbia" }, { ko: "보스니아헤르체고비나", en: "Bosnia and Herzegovina" },
-  { ko: "북마케도니아", en: "North Macedonia" }, { ko: "알바니아", en: "Albania" }, { ko: "코소보", en: "Kosovo" },
-  { ko: "몬테네그로", en: "Montenegro" },
-  // Oceania
-  { ko: "호주", en: "Australia" }, { ko: "뉴질랜드", en: "New Zealand" }, { ko: "피지", en: "Fiji" },
-  { ko: "파푸아뉴기니", en: "Papua New Guinea" }, { ko: "사모아", en: "Samoa" }, { ko: "통가", en: "Tonga" },
-  { ko: "바누아투", en: "Vanuatu" },
-  // Africa
-  { ko: "알제리", en: "Algeria" }, { ko: "모로코", en: "Morocco" }, { ko: "튀니지", en: "Tunisia" },
-  { ko: "리비아", en: "Libya" }, { ko: "이집트", en: "Egypt" }, { ko: "수단", en: "Sudan" },
-  { ko: "남수단", en: "South Sudan" }, { ko: "에티오피아", en: "Ethiopia" }, { ko: "에리트레아", en: "Eritrea" },
-  { ko: "지부티", en: "Djibouti" }, { ko: "소말리아", en: "Somalia" }, { ko: "케냐", en: "Kenya" },
-  { ko: "우간다", en: "Uganda" }, { ko: "탄자니아", en: "Tanzania" }, { ko: "르완다", en: "Rwanda" },
-  { ko: "부룬디", en: "Burundi" }, { ko: "콩고민주공화국", en: "Democratic Republic of the Congo" },
-  { ko: "콩고공화국", en: "Republic of the Congo" }, { ko: "가봉", en: "Gabon" },
-  { ko: "적도기니", en: "Equatorial Guinea" }, { ko: "카메룬", en: "Cameroon" },
-  { ko: "중앙아프리카공화국", en: "Central African Republic" }, { ko: "차드", en: "Chad" },
-  { ko: "나이지리아", en: "Nigeria" }, { ko: "니제르", en: "Niger" }, { ko: "베냉", en: "Benin" },
-  { ko: "토고", en: "Togo" }, { ko: "가나", en: "Ghana" }, { ko: "코트디부아르", en: "Côte d'Ivoire" },
-  { ko: "라이베리아", en: "Liberia" }, { ko: "시에라리온", en: "Sierra Leone" }, { ko: "기니", en: "Guinea" },
-  { ko: "기니비사우", en: "Guinea-Bissau" }, { ko: "감비아", en: "Gambia" }, { ko: "세네갈", en: "Senegal" },
-  { ko: "부르키나파소", en: "Burkina Faso" }, { ko: "말리", en: "Mali" }, { ko: "모리타니", en: "Mauritania" },
-  { ko: "마다가스카르", en: "Madagascar" }, { ko: "모잠비크", en: "Mozambique" }, { ko: "짐바브웨", en: "Zimbabwe" },
-  { ko: "잠비아", en: "Zambia" }, { ko: "앙골라", en: "Angola" }, { ko: "나미비아", en: "Namibia" },
-  { ko: "보츠와나", en: "Botswana" }, { ko: "레소토", en: "Lesotho" }, { ko: "에스와티니", en: "Eswatini" },
-  { ko: "말라위", en: "Malawi" }, { ko: "세이셸", en: "Seychelles" }, { ko: "모리셔스", en: "Mauritius" },
-  { ko: "카보베르데", en: "Cabo Verde" }, { ko: "상투메프린시페", en: "São Tomé and Príncipe" },
-];
+const COUNTRIES_KO_EN = [];
 
 function BoardCategorySelect({ options = [], value, onChange, disabled }) {
   return (
@@ -310,7 +239,9 @@ function BoardCategorySelect({ options = [], value, onChange, disabled }) {
 }
 
 function BoardWrite() {
-  const navigate = useNavigate(); // <-- 3. navigate 함수 사용 준비
+  const navigate = useNavigate();
+  const { user } = useAuth?.() || {};
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [authorType, setAuthorType] = useState("id"); // "id" | "anon"
@@ -318,7 +249,7 @@ function BoardWrite() {
   const [keywords, setKeywords] = useState([]);
   const [images, setImages] = useState([]);
 
-  const [categoryType, setCategoryType] = useState(""); // "multi" | "national" | ""
+  const [categoryType, setCategoryType] = useState(""); 
   const [category, setCategory] = useState("");
 
   const green = "#00664F";
@@ -333,11 +264,6 @@ function BoardWrite() {
     value: ko,
     label: `${ko} (${en})`,
   }));
-  const optionsMap = { multi: multiOptions, national: nationalOptions };
-
-  const currentOptions =
-    categoryType === "multi" ? optionsMap.multi :
-    categoryType === "national" ? optionsMap.national : [];
 
   const handleCategoryType = (type) => {
     setCategoryType(type);
@@ -358,28 +284,9 @@ function BoardWrite() {
   };
   const removeKeyword = (k) => setKeywords((prev) => prev.filter((x) => x !== k));
 
-  // ===================================================================
-  // 4. handleSubmit 함수를 API 연동 로직으로 전면 수정
-  // ===================================================================
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Checking state values before creating payload:", {
-      title,
-      content,
-      category,
-      keywords,
-      authorType,
-    });
-  
-    // --- Validation checks ---
-    if (!title.trim() || !content.trim()) {
-      alert("Please enter a title and content.");
-      return;
-    }
-
-    // --- 유효성 검사 ---
     if (!title.trim() || !content.trim()) {
       alert("제목과 본문을 모두 입력해 주세요.");
       return;
@@ -389,11 +296,6 @@ function BoardWrite() {
       return;
     }
 
-    // --- 데이터 준비 (FormData) ---
-    const formData = new FormData();
-
-    // 1. JSON 데이터 (payload) 생성
-    // 백엔드의 PostCreateRequest DTO와 필드가 일치해야 합니다.
     const payload = {
       title: title.trim(),
       content: content.trim(),
@@ -402,43 +304,38 @@ function BoardWrite() {
       anonymous: authorType === "anon",
     };
 
-    formData.append(
-      "postData",
-      new Blob([JSON.stringify(payload)], { type: "application/json" })
-    );
+    const formData = new FormData();
+    formData.append("postData", new Blob([JSON.stringify(payload)], { type: "application/json" }));
+    images.forEach((imageFile) => formData.append("Images", imageFile));
 
-    // 2. 이미지 파일 추가
-    images.forEach((imageFile) => {
-      formData.append("images", imageFile);
-    });
-    
-    // 3. API 엔드포인트 선택
-    const endpoint = categoryType === "national"
-      ? "/api/national-posts"
-      // TODO: 백엔드에 맞게 수정 필요
-      : "/api/posts";
+    const endpoint = categoryType === "national" ? "/api/national-posts" : "/api/posts";
 
     try {
-      // --- API 호출 ---
-      // headers 부분은 interceptor가 자동으로 처리하므로 삭제합니다.
-      const response = await api.post(endpoint, formData);
+      const token = localStorage.getItem("accessToken");
+      const { data } = await api.post(endpoint, formData, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : undefined,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      console.log("게시글 생성 성공:", response.data);
-      alert("게시글이 성공적으로 등록되었습니다.");
+      const created = data?.data || data;
 
-      // 성공 후 상세 페이지로 이동 (응답 데이터 구조에 맞게 postId를 추출)
-      const newPostId = response.data?.data?.postId;
-      if (newPostId) {
-          navigate(`/board/${newPostId}`);
-      } else {
-          navigate("/board");
+      if (!created?.createdAt) {
+        created.createdAt = new Date().toISOString();
       }
+      try {
+        localStorage.setItem(`post:${created.postId}`, JSON.stringify(created));
+      } catch {}
+
+      navigate("/board", { state: { newPost: created } });
+
     } catch (error) {
-      console.error("게시글 생성 실패:", error.response);
-      alert(error.response?.data?.message || "게시글 등록 중 오류가 발생했습니다.");
+      console.error("게시글 생성 실패:", error?.response || error);
+      alert(error?.response?.data?.message || "게시글 등록 중 오류가 발생했습니다.");
     }
-  }
-  
+  };
+
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#fff" }}>
       <BoardNav active="board" />
@@ -449,9 +346,7 @@ function BoardWrite() {
             글쓰기
           </h2>
 
-          {/* form 태그에 onSubmit 연결 */}
           <form onSubmit={handleSubmit}>
-            {/* ... (폼 내부는 기존 코드와 동일) ... */}
             <div
               style={{
                 display: "grid",
@@ -564,13 +459,7 @@ function BoardWrite() {
                 게시판 <span style={{ color: "red", fontSize: "10px", verticalAlign: "middle" }}>●</span>
               </label>
               <BoardCategorySelect
-                options={
-                  categoryType === "multi"
-                    ? multiOptions
-                    : categoryType === "national"
-                    ? nationalOptions
-                    : []
-                }
+                options={categoryType === "multi" ? multiOptions : categoryType === "national" ? nationalOptions : []}
                 value={category}
                 onChange={setCategory}
                 disabled={!categoryType}
@@ -648,6 +537,7 @@ function BoardWrite() {
                 </div>
               </div>
             </div>
+
             {/* Actions */}
             <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginTop: "28px" }}>
               <button
