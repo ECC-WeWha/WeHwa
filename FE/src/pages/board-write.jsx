@@ -315,7 +315,7 @@ function BoardWrite() {
   const [content, setContent] = useState("");
   const [authorType, setAuthorType] = useState("id"); // "id" | "anon"
   const [keywordInput, setKeywordInput] = useState("");
-  const [keywords, setKeywords] = useState(["일본 유학생", "일식 맛집"]);
+  const [keywords, setKeywords] = useState([]);
   const [images, setImages] = useState([]);
 
   const [categoryType, setCategoryType] = useState(""); // "multi" | "national" | ""
