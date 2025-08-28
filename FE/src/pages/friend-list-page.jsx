@@ -1,23 +1,54 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ProfileCardMini from "../components/board/profilecardmini.jsx";
 import BoardNav from "../components/top-nav/top-nav.jsx";
 import FriendListSidebar from "../components/sidebar/friend-list-sidebar.jsx";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useMatch, useNavigate, useLocation } from "react-router-dom";
 //import axios from "axios";
 import {api} from "../api/client.js";
-
+const ENDPOINTS = {
+    friends: "/api/friend-requests",
+    requests: "/api/friend-requests/received",
+    };
 const border = "#ffffff";
-//const BASE = (import.meta.env.VITE_REACT_APP_BACKEND_URL || "").replace(/\/+$/, "");
+const DEFAULT_IMG = "/images/profile.png"; 
+const getId = (x) => x?.userId ?? x?.senderId ?? x?.id;                 // NEW
+function mapUser(p = {}) {
+  return {
+    id: getId(p),
+    name: p.nickname,
+    langName: p.languageName,                        // 모국어
+    langs: [p.studyLanguageName].filter(Boolean),    // 학습언어(단일)
+    major: p.major,
+    tags: [p.purpose].filter(Boolean),               // 목적만 태그로
+    bio: p.introduction,
+    img: normalizeImg(p.profileImage),
+    region: p.region,
+    topik: p.topik ?? p.koreanTopic ?? p.koreanTopicScore ?? null,
+    education: p.studentStatus ?? p.education ?? p.grade ?? null,
+    kakao: p.kakaoId ?? null,
+    instagram: p.instagramId ?? null,
+    // 원본도 보존 (필요시 접근)
+    ...p,
+  };
+}
 
-
+function normalizeImg(src) {
+    // ✅ null/빈 문자열이면 기본 이미지로 대체
+    if (!src) return DEFAULT_IMG;                    // CHANGED
+    if (/^https?:\/\//i.test(src) || src.startsWith("/")) return src;
+    return `/images/${src}`;
+  }
 
 export default function FriendListPage() {
     const navigate = useNavigate();
     const isRequests = useMatch("/friendlist/requests") !== null;
     const context = isRequests ? "requests" : "list";
+    ////
+    const { pathname } = useLocation(); // [DEBUG]
 
     const [friends, setFriends] = useState([]); //백엔드꺼
     const [requests, setRequests] = useState([]); //흠 주소가 friend-requensts 이긴 했는데
+    const abortRef = useRef(); 
 
     const [favorites, setFavorites] = useState(() => new Set());
     const toggleFavorite = (id) => {
@@ -29,80 +60,83 @@ export default function FriendListPage() {
     }
 
     const openProfile = (user) => {
-        navigate(`/friendlist/${user.id}`, { state: { user, mode: isRequests ? "requests" : "friends" } });
+      if (!user) return;
+      const id = getId(user);                                          // NEW
+      navigate(`/friendlist/${id}`, {
+        state: { user, mode: isRequests ? "requests" : "friends" },    // CHANGED: raw user 그대로
+      });
     };
-    //공통 매퍼..?
-    const mapUser = (u) => ({
-        id: u.id ?? u.userId,
-        name: u.nickname ?? u.name,
-        langs: u.languages ?? u.langs ?? [],
-        country: u.country,
-        bio: u.bio,
-        tags: u.tags ?? [],
-        img: u.profileImage ?? u.img,
-    });
 
-    // 데이터 로드
     useEffect(() => {
+      
+        if (abortRef.current) abortRef.current.abort();        
+        const controller = new AbortController();             
+        abortRef.current = controller;                         
+    
         (async () => {
-        try {
-        const [fRes, rRes] = await Promise.all([
-            api.get("/api/friends"),
-            api.get("/api/friend-requests")
-            //axios.get(`${BASE}/api/friends`, {withCredentials: true }),
-            //axios.get(`${BASE}/api/friend-requests`, { withCredentials: true }),
-        ]);
-
-
-        const fData = Array.isArray(fRes.data?.data) ? fRes.data.data : fRes.data || [];
-        setFriends(fData.map(mapUser));
-        const rRaw = Array.isArray(rRes.data?.data) ? rRes.data.data : rRes.data || [];
-        const rData = rRaw.map((r) => ({
-            requestId: r.requestId ?? r.id,   // 백엔드 키명에 맞게 보정
-            user: mapUser(r.requester ?? r.user ?? r),
-        }));
-        setRequests(rData);
-        } 
-        catch (e) {
-            const s = e?.response?.status;
-            if (s === 401) alert("로그인이 필요합니다. 🔑");
-            else if (s === 403) alert("접근 권한이 없습니다. 🛑");
-            else alert("친구/요청 데이터를 불러오지 못했습니다.");
-        //console.error("친구 목록 실패:", e?.response?.status, e?.response?.data || e?.message);
-        //alert("친구/요청 데이터를 불러오지 못했습니다.");
-        //setFriends([]);
-        //setRequests([]);
-        }
-    })();
-}, []);
-
-
+          try {
+            const [fr, rr] = await Promise.allSettled([
+              api.get(ENDPOINTS.friends, { signal: controller.signal }),
+              api.get(ENDPOINTS.requests, { signal: controller.signal }),
+            ]);
+            if (fr.status === "fulfilled") {
+              const rawFriends = Array.isArray(fr.value?.data?.data)
+            ? fr.value.data.data
+            : Array.isArray(fr.value?.data) ? fr.value.data : [];
+            const mappedFriends = rawFriends.map(mapUser); 
+            setFriends(mappedFriends);                                     // CHANGED: 매핑 제거
+          } else {
+            setFriends([]);
+          }
+    
+            if (rr.status === "fulfilled") {
+              const rawReq = Array.isArray(rr.value?.data?.data)
+                ? rr.value.data.data
+                : Array.isArray(rr.value?.data) ? rr.value.data : [];
+                const mappedReq = rawReq.map((r) => ({
+                  requestId: r.requestId ?? r.id ?? r.senderId, // 요청 고유키
+                  ...mapUser(r),                                 // 유저 필드 매핑
+                }));
+                setRequests(mappedReq);                                        // CHANGED: 매핑 제거
+                } else {
+              setRequests([]); 
+            }
+          } catch (_) {
+            setFriends([]);   
+            setRequests([]);  
+          }
+        })();
+    
+        return () => controller.abort();                       // NEW
+      }, [isRequests]);
+  
     
     const acceptRequest = async (requestId) => {
+        const prevRequests = requests; /////
+        const prevFriends = friends;   /////
+
         const target = requests.find((r) => r.requestId === requestId);
         if (!target) return;
-        // UI 먼저 반영
-        setRequests((prev) => prev.filter((r) => r.requestId !== requestId));
-        setFriends((prev) => [...prev.filter((p) => p.id !== target.user.id), target.user]);
+        const targetUserId = getId(target);                               // CHANGED
+          setRequests((prev) => prev.filter((r) => getReqId(r) !== requestId));
+          setFriends((prev) => [...prev.filter((p) => getId(p) !== targetUserId), target]);
         try {
             await api.post(`/api/friend-requests/${requestId}/accept`);
-            //await axios.post(`${BASE}/api/friend-requests/${requestId}/accept`, null, { withCredentials: true });
-        } catch (e){
+        } catch (_){ //여기 왜 이거일까나
           // 롤백
-            setFriends((prev) => prev.filter((u) => u.id !== target.user.id));
-            setRequests((prev) =>[target,...prev]);
+            setFriends(prevFriends);
+            setRequests(prevRequests);
             alert("수락에 실패했습니다.");
         }
-    ;
+    };
 
     const rejectRequest = async (requestId) => {
         const prevRequests = requests;
         setRequests((prev) => prev.filter((u) => u.requestId !== requestId));
         try {
             await api.post(`/api/friend-requests/${requestId}/reject`);
-            //await api.post(`${BASE}/api/friend-requests/${requestId}/reject`); 
-            //await axios.post(`${BASE}/api/friend-requests/${requestId}/reject`, null, { withCredentials: true });
-        } catch (e) {
+            
+        } catch (_) {
             setRequests(prevRequests);
             alert("거절에 실패했습니다.");
         }
@@ -117,8 +151,14 @@ export default function FriendListPage() {
             alert("삭제에 실패했습니다.");
         }
     };
-    const DATA = isRequests ? requests.map((r) => ({ ...r.user, _requestId: r.requestId }))  :friends;
-
+    const EmptyState = () => (
+        <div style={{ padding: 40, textAlign: "center" }}>
+          친구목록이 없습니다. 😥
+          <div style={{ fontSize: 13, color: "#888", marginTop: 8 }}>
+            친구매칭을 통해 친구를 추가해보세요.
+          </div>
+        </div>
+      );
 
 return (
     <>
@@ -134,30 +174,64 @@ return (
                 borderRadius: 20,
                 padding: 0,
             }}
-        >
-            <div
+        >   
+            {!isRequests && (
+              friends.length === 0 ? (
+              <EmptyState />
+            ) : (
+              <div
                 style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-                gap: 16,
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+                  gap: 16,
                 }}
             >
-            {DATA.map((u) => (
+            {friends.map((u) => (
                 <ProfileCardMini
-                    key={u.id}
-                    user={u}
-                    requested={favorites.has(u.id)}
-                    onToggleRequest={() => toggleFavorite(u.id)}
-                    onClick={() => openProfile(u)}
-                    context={context}
+                key={u.id}
+                user={u}                                   // 매핑된 유저
+                requested={favorites.has(u.id)}
+                onToggleRequest={() => toggleFavorite(u.id)}
+                onClick={() => openProfile(u)}
+                context={context}
+                onDelete={() => deleteFriend(u.id)}
                 />
             ))}
             </div>
+            )
+        )}
+        {isRequests && (
+              requests.length === 0 ? (
+                <EmptyState />
+              ) : (
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+                    gap: 16,
+                    padding: 16,
+                  }}
+                >
+                  {requests.map((r) => (
+                      <ProfileCardMini
+                      key={r.requestId}
+                      user={r}                                   // {requestId, ...유저필드}
+                      requested={favorites.has(r.id)}
+                      onToggleRequest={() => toggleFavorite(r.id)}
+                      onClick={() => openProfile(r)}
+                      context={context}
+                      onAccept={() => acceptRequest(r.requestId)}
+                      onReject={() => rejectRequest(r.requestId)}   // CHANGED
+                      />
+                  
+                  ))}
+                </div>
+                )
+            )}
         </section>
-        </div>
+      </div>
     </div>
     <div style={{ height: 40 }} />
-    </>
+  </>
 );
-}
 }
