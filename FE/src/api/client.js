@@ -2,9 +2,8 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL:"http://localhost:5001", // http://wewha.ap-northeast-2.elasticbeanstalk.com
-  //headers: { "Content-Type": "application/json", Accept: "application/json" },
-  headers: { Accept: "application/json" },
+  baseURL:"", // http://wewha.ap-northeast-2.elasticbeanstalk.com
+  headers: { "Content-Type": "application/json", Accept: "application/json" },
   timeout: 15000,
   withCredentials: false,
 });
