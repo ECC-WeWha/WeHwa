@@ -8,7 +8,6 @@ import {api} from "../api/client.js";
 const green = "#00664F";
 const border = "#E9E9E9";
 const softText = "#6B6B6B";
-const badge = "#66A395";
 
 const pushId = (key, id) => {
     const set = new Set(JSON.parse(sessionStorage.getItem(key) || "[]"));
@@ -16,6 +15,12 @@ const pushId = (key, id) => {
     sessionStorage.setItem(key, JSON.stringify([...set]));
 };
 
+const DEFAULT_IMG = "/images/profile.png"; // NEW
+function normalizeImg(src) {               // CHANGED
+  if (!src) return DEFAULT_IMG;
+  if (/^https?:\/\//i.test(src) || src.startsWith("/")) return src;
+  return `/images/${src}`;
+}
 
 function RequestActions({ onAccept, onReject }) {
     return (
@@ -168,31 +173,32 @@ export default function FriendListDetail() {
     const isRequests = matchRequestsByUrl || modeFromState === "requests";
 
     const requestId =
-      state?.requestId ??
-      state?.user?._requestId ??
+    state?.requestId ??
+    state?.user?.requestId ??
+    state?.user?._requestId ??
     null; 
 
     const user = useMemo(() => {
-        if (state?.user) return state.user;
-        return {
-        id,
-        name: "Heejin",
-        username: "heejin0316",
-        country: "한국",
-        langs: ["Korean", "English"],
-        interests: ["여행", "음악", "커피"],
-        purpose: "언어 교류",
-        contact: "DM",
-        bio:
-            "Hi! I’m Heejin from Korea. My native language is Korean, and I’m looking for a language exchange partner to practice English. I’d be happy to help with Korean too! If you’re interested, feel free to send me a friend request. 😊",
-        banner:
-            "linear-gradient(135deg, rgba(255,124,142,0.9), rgba(255,189,125,0.9))",
-        instagram: "https://instagram.com/test_account",
-        kakao: "https://open.kakao.com/o/test",
-        _requestId: requestId,
-        };
+      const raw = state?.user ?? {};
+      return {
+        ...raw, // 원본 보존
+        id: raw.userId ?? raw.senderId ?? raw.id ?? id,                           // CHANGED
+        name: raw.nickname ?? raw.name ?? "익명",                                  // CHANGED
+        img: normalizeImg(raw.profileImage ?? raw.img),                           // CHANGED
+        region: raw.region ?? null,                                               // CHANGED
+        purpose: raw.purpose ?? null,                                             // CHANGED
+        langName: raw.languageName ?? null,                                       // CHANGED (모국어)
+        langs: [raw.studyLanguageName].filter(Boolean),                           // CHANGED (학습언어 단일)
+        topik: raw.koreanTopicScore ?? raw.koreanTopic ?? raw.topik ?? null,            // CHANGED
+        major: raw.major ?? null,                                                 // CHANGED
+        education: raw.studentStatus ?? raw.education ?? raw.grade ?? null,       // CHANGED
+        bio: raw.introduction ?? raw.bio ?? "",                                   // CHANGED
+        kakao: raw.kakaoId ?? null,
+        instagram: raw.instagramId ?? null,
+        requestId: requestId,                                                     // CHANGED
+      };
     }, [state, id, requestId]);
-
+//////////////////////////////////////////////////////
     const badges = useMemo(() => buildBadgesFromUser(user), [user]);
 
     const [processing, setProcessing] = useState(false); // 요청 수락/거절 API 처리 중 표시용(옵션)
@@ -212,9 +218,9 @@ export default function FriendListDetail() {
     const handleReject = async () => {
         try {
         setProcessing(true);
-        const rid = requestId ?? user._requestId ?? user.requestId ?? null;
+        const rid = user._requestId ?? user.requestId ?? user.id;
 
-        await api.post(`/api/friend-requests/${rid ??user.id}/reject`);
+        await api.post(`/api/friend-requests/${rid}/reject`);
         alert("친구 요청을 거절했습니다.");
         pushId("rejected_ids", user.id);
         navigate("/friendlist/requests", { replace: true });
@@ -232,6 +238,7 @@ export default function FriendListDetail() {
         navigate("/friendlist", { replace: true }); 
         } finally { setProcessing(false); }
     };
+
 
 return (
     <>
@@ -262,6 +269,8 @@ return (
             >
               {/* Avatar */}
               <div
+                role="img"
+                aria-label="사용자 프로필 이미지"
                 style={{
                   position: "absolute",
                   left: 40,
@@ -311,7 +320,7 @@ return (
 
             {/* Bio */}
             <div style={{ padding: "0 24px 16px", color: softText, fontSize: 20, lineHeight: 1.7 }}>
-              {user.bio}
+              {user.bio || "소개가 없습니다."}
             </div>
 
             <hr style={{ border: 0, borderTop: `1px solid ${border}`, margin: "0 24px 16px" }} />
@@ -322,22 +331,8 @@ return (
                 <InfoRow label="아이디" value={user.username || "-"} />
                 <InfoRow label="국적" value={user.country || "-"} />
                 <InfoRow label="목적" value={user.purpose || "-"} />
-                <InfoRow
-                  label="모국어"
-                  value={
-                    Array.isArray(user.nativeLanguage) && user.nativeLanguage.length
-                      ? user.nativeLanguage.join(" · ")
-                      : "-"
-                  }
-                />
-                <InfoRow
-                  label="학습언어"
-                  value={
-                    Array.isArray(user.targetLanguage) && user.targetLanguage.length
-                      ? user.targetLanguage.join(", ")
-                      : "-"
-                  }
-                />
+                <InfoRow label="모국어" value={user.langName || "-"} />           {/* CHANGED */}
+                <InfoRow label="학습언어" value={user.langs?.[0] || "-"} />
                 <InfoRow label="한국어 토픽" value={user.topik || "-"} />
                 <InfoRow label="전공" value={user.major || "-"} />
                 <InfoRow label="학적" value={user.education || "-"} />

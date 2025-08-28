@@ -4,9 +4,9 @@ import FlagCircleOutlinedIcon from "@mui/icons-material/FlagCircleOutlined";
 const Tag = ({ children }) => (
   <span
     style={{
-      border: "1px solid #00664F",
-      background: "#FFFFFF",
-      color: "#6B6B6B",
+      border : "none",
+      background: "#BCC92433",
+      color: "#000000",
       fontSize: 16,
       padding: "6px 10px",
       borderRadius: 20,
@@ -16,6 +16,15 @@ const Tag = ({ children }) => (
     {children}
   </span>
 );
+
+const goodstyle = {
+            fontSize: 16,
+            color: "#1a1a1a",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            maxWidth: "100%",
+}
 
 function RequestBadge({ requested, onToggle }) {
   return (
@@ -107,6 +116,7 @@ export default function ProfileCard({ user, requested, onToggleRequest, onClick 
         
         <RequestBadge requested={requested} onToggle={onToggleRequest} />
       </div>
+      
 
       {/* Languages */}
       <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
@@ -119,9 +129,9 @@ export default function ProfileCard({ user, requested, onToggleRequest, onClick 
             whiteSpace: "nowrap",
             maxWidth: "100%",
           }}
-          title={user.langs.join(", ")}
+          title={user.langs[0]}
         >
-          {user.langs.join(", ")}
+          {user.langs[0] || "-"}
         </strong>
       </div>
 
@@ -138,7 +148,7 @@ export default function ProfileCard({ user, requested, onToggleRequest, onClick 
         }}
         title={user.bio}
       >
-        {user.bio}
+        {user.bio || "소개가 없습니다."}
       </div>
 
       {/* Tags */}
