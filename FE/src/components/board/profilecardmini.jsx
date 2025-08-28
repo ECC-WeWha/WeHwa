@@ -6,9 +6,9 @@ import InstaLink from "../../assets/images/insta.png"
 const Tag = ({ children }) => (
   <span
     style={{
-      border: "1px solid #00664F",
-      background: "#FFFFFF",
-      color: "#6B6B6B",
+      border : "none",
+      background: "#BCC92433",
+      color: "#000000",
       fontSize: 16,
       padding: "6px 10px",
       borderRadius: 20,
@@ -219,9 +219,9 @@ return (
             whiteSpace: "nowrap",
             maxWidth: "100%",
           }}
-          title={user.langs.join(", ")}
+          title={user.langs[0]}
         >
-          {user.langs.join(", ")}
+          {user.langs[0] || "소개가 없습니다."}
         </strong>
       </div>
 
@@ -238,7 +238,7 @@ return (
         }}
         title={user.bio}
       >
-        {user.bio}
+        {user.bio || "소개가 없습니다."}
       </div>
 
       {/* Tags */}

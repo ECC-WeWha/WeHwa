@@ -10,6 +10,34 @@ const ENDPOINTS = {
     requests: "/api/friend-requests/received",
     };
 const border = "#ffffff";
+const DEFAULT_IMG = "/images/profile.png"; 
+const getId = (x) => x?.userId ?? x?.senderId ?? x?.id;                 // NEW
+function mapUser(p = {}) {
+  return {
+    id: getId(p),
+    name: p.nickname,
+    langName: p.languageName,                        // 모국어
+    langs: [p.studyLanguageName].filter(Boolean),    // 학습언어(단일)
+    major: p.major,
+    tags: [p.purpose].filter(Boolean),               // 목적만 태그로
+    bio: p.introduction,
+    img: normalizeImg(p.profileImage),
+    region: p.region,
+    topik: p.topik ?? p.koreanTopic ?? p.koreanTopicScore ?? null,
+    education: p.studentStatus ?? p.education ?? p.grade ?? null,
+    kakao: p.kakaoId ?? null,
+    instagram: p.instagramId ?? null,
+    // 원본도 보존 (필요시 접근)
+    ...p,
+  };
+}
+
+function normalizeImg(src) {
+    // ✅ null/빈 문자열이면 기본 이미지로 대체
+    if (!src) return DEFAULT_IMG;                    // CHANGED
+    if (/^https?:\/\//i.test(src) || src.startsWith("/")) return src;
+    return `/images/${src}`;
+  }
 
 export default function FriendListPage() {
     const navigate = useNavigate();
@@ -32,12 +60,18 @@ export default function FriendListPage() {
     }
 
     const openProfile = (user) => {
-        navigate(`/friendlist/${user.id}`, { state: { user, mode: isRequests ? "requests" : "friends" } });
+      if (!user) return;
+      const id = getId(user);                                          // NEW
+      navigate(`/friendlist/${id}`, {
+        state: { user, mode: isRequests ? "requests" : "friends" },    // CHANGED: raw user 그대로
+      });
     };
+
     useEffect(() => {
-        if (abortRef.current) abortRef.current.abort();        // NEW
-        const controller = new AbortController();              // NEW
-        abortRef.current = controller;                         // NEW
+      
+        if (abortRef.current) abortRef.current.abort();        
+        const controller = new AbortController();             
+        abortRef.current = controller;                         
     
         (async () => {
           try {
@@ -45,27 +79,31 @@ export default function FriendListPage() {
               api.get(ENDPOINTS.friends, { signal: controller.signal }),
               api.get(ENDPOINTS.requests, { signal: controller.signal }),
             ]);
-    
             if (fr.status === "fulfilled") {
               const rawFriends = Array.isArray(fr.value?.data?.data)
-                ? fr.value.data.data
-                : Array.isArray(fr.value?.data) ? fr.value.data : [];
-              setFriends(rawFriends);
-            } else {
-              setFriends([]); // NEW: 실패 시 빈 배열
-            }
+            ? fr.value.data.data
+            : Array.isArray(fr.value?.data) ? fr.value.data : [];
+            const mappedFriends = rawFriends.map(mapUser); 
+            setFriends(mappedFriends);                                     // CHANGED: 매핑 제거
+          } else {
+            setFriends([]);
+          }
     
             if (rr.status === "fulfilled") {
               const rawReq = Array.isArray(rr.value?.data?.data)
                 ? rr.value.data.data
                 : Array.isArray(rr.value?.data) ? rr.value.data : [];
-              setRequests(rawReq);
-            } else {
-              setRequests([]); // NEW
+                const mappedReq = rawReq.map((r) => ({
+                  requestId: r.requestId ?? r.id ?? r.senderId, // 요청 고유키
+                  ...mapUser(r),                                 // 유저 필드 매핑
+                }));
+                setRequests(mappedReq);                                        // CHANGED: 매핑 제거
+                } else {
+              setRequests([]); 
             }
           } catch (_) {
-            setFriends([]);   // NEW
-            setRequests([]);  // NEW
+            setFriends([]);   
+            setRequests([]);  
           }
         })();
     
@@ -79,10 +117,9 @@ export default function FriendListPage() {
 
         const target = requests.find((r) => r.requestId === requestId);
         if (!target) return;
-        
-        // UI 먼저 반영
-        setRequests((prev) => prev.filter((r) => r.requestId !== requestId));
-        setFriends((prev) => [...prev.filter((p) => p.id !== target.user.id), target.user]);
+        const targetUserId = getId(target);                               // CHANGED
+          setRequests((prev) => prev.filter((r) => getReqId(r) !== requestId));
+          setFriends((prev) => [...prev.filter((p) => getId(p) !== targetUserId), target]);
         try {
             await api.post(`/api/friend-requests/${requestId}/accept`);
         } catch (_){ //여기 왜 이거일까나
@@ -151,15 +188,13 @@ return (
             >
             {friends.map((u) => (
                 <ProfileCardMini
-                    key={u.id}
-                    user={u}
-                    requested={favorites.has(u.id)}
-                    onToggleRequest={() => toggleFavorite(u.id)}
-                    onClick={() => openProfile(u)}
-                    context={context}
-                    onAccept={u._requestId ? () => acceptRequest(u._requestId) : undefined}
-                    onReject={u._requestId ? () => rejectRequest(u._requestId) : undefined}
-                    onDelete={!u._requestId ? () => deleteFriend(u.id) : undefined}
+                key={u.id}
+                user={u}                                   // 매핑된 유저
+                requested={favorites.has(u.id)}
+                onToggleRequest={() => toggleFavorite(u.id)}
+                onClick={() => openProfile(u)}
+                context={context}
+                onDelete={() => deleteFriend(u.id)}
                 />
             ))}
             </div>
@@ -178,19 +213,20 @@ return (
                   }}
                 >
                   {requests.map((r) => (
-                    <ProfileCardMini
-                      key={r.requestId}                         // 요청 고유키
-                      user={r.user}                             // 원본 그대로 (user 필드)
-                      requested={favorites.has(r.user?.id)}
-                      onToggleRequest={() => r.user?.id && toggleFavorite(r.user.id)}
-                      onClick={() => r.user && openProfile(r.user)}
+                      <ProfileCardMini
+                      key={r.requestId}
+                      user={r}                                   // {requestId, ...유저필드}
+                      requested={favorites.has(r.id)}
+                      onToggleRequest={() => toggleFavorite(r.id)}
+                      onClick={() => openProfile(r)}
                       context={context}
                       onAccept={() => acceptRequest(r.requestId)}
-                      onReject={() => rejectRequest(r.requestId)}
-                    />
+                      onReject={() => rejectRequest(r.requestId)}   // CHANGED
+                      />
+                  
                   ))}
                 </div>
-              )
+                )
             )}
         </section>
       </div>

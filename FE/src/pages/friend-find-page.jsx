@@ -7,47 +7,9 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 
 import { api } from "../api/client";
 
-const USERS = [
-    { 
-      id: 2, 
-      name: "Angella", 
-      langs: ["English"], 
-      country: "United States", 
-      bio: "Hi, I'm Angella! Let's be friends", 
-      tags: ["미국", "컴퓨터공학", "친목"], 
-      img: `/images/profile-2.jpg`
-    },
-    { 
-      id: 3, 
-      name: "Angella", 
-      langs: ["Finnish", "Korean"], 
-      country: "United States", 
-      bio: "Hi, I'm Angella! Let's be friends", 
-      tags: ["영국", "컴퓨터공학", "친목"], 
-      img: `/images/profile-3.jpg`
-    },
-    { 
-      id: 5, 
-      name: "Angella", 
-      langs: ["English", "Burmese"], 
-      country: "United States", 
-      bio: "Hi, I'm Angella! Let's be friends", 
-      tags: ["스페인", "컴퓨터공학", "친목"], 
-      img: `/images/profile-5.jpg`
-    },
-    { 
-      id: 8, 
-      name: "Lalisa", 
-      langs: ["Thai"], 
-      country: "United States", 
-      bio: "Hi, I'm Angella! Let's be friends", 
-      tags: ["일본", "컴퓨터공학", "친목"], 
-      img: `/images/profile-8.jpg`
-    }
-  ]
-  ;
 
 const border = "#ffffff";
+
 
 // NEW: 파일명만 올 때 /images/ 접두어 보정
 function normalizeImg(src) { // NEW
@@ -89,16 +51,21 @@ export default function FriendFindPage() {
           const raw = Array.isArray(res?.data?.data) ? res.data.data : []; // CHANGED
   
           // ⭐ 핵심: 백엔드 키 → UI 키로 최소 매핑
-          const mapped = raw.map((p) => ({ // CHANGED
-            id: p.userId,                                   // CHANGED
-            name: p.nickname,                               // CHANGED
-            langs: [p.languageName, p.studyLanguageName].filter(Boolean), // CHANGED
-            country: p.region,                              // CHANGED
-            bio: p.introduction,                            // CHANGED
-            tags: [p.major, p.purpose].filter(Boolean),     // CHANGED
-            img: normalizeImg(p.profileImage),              // CHANGED
-            // ⬇️ 기존 코드들이 쓸 수도 있는 원본/추가 필드는 보존
-            ...p,                                           // NEW (friendRequested, friend 등 유지)
+          const mapped = raw.map((p) => ({
+            id: p.userId ?? p.senderId,
+            name: p.nickname,
+            langName: p.languageName, // 모국어
+            langs: [p.studyLanguageName].filter(Boolean), // 학습 언어만
+            major: p.major, // 별도 필드
+            tags: [p.purpose].filter(Boolean),
+            bio: p.introduction,
+            img: normalizeImg(p.profileImage),
+            region: p.region, // 국적
+            topik: p.topik ?? p.koreanTopic ?? p.koreanTopicScore ?? null,
+            education: p.studentStatus ?? p.education ?? p.grade ?? null,
+            kakao: p.kakaoId ?? null,
+            instagram: p.instagramId ?? null,
+            ...p, // 원본 유지
           }));
   
           setProfiles(mapped);                              // CHANGED

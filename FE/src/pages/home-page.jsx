@@ -1,11 +1,13 @@
 
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import flagthi from "../assets/images/flagthi.png";
 import flagcn from "../assets/images/flagcn.png";
 import flagin from "../assets/images/flagin.png";
 import flagjp from "../assets/images/flagjp.png";
 import flaggm from "../assets/images/flaggm.png";
+import { api } from "../api/client";
+import { useAuth } from "../components/layout/AuthContext.jsx";
 const green = "#00664F";
 const softGreen = "#66A395";
 const gray ="#B4B4B4";
@@ -13,16 +15,55 @@ const gray ="#B4B4B4";
 function HomePage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
+
+  const [profile, setProfile] = useState(null);
+  useEffect(() => {
+    let ignore = false;
+    (async () => {
+      try {
+        const res = await api.get("/api/users/me"); // 서버에서 내 정보 가져오기
+        if (!ignore) {
+          setProfile(res?.data?.data ?? res?.data ?? null); // 응답 스키마에 따라 보정
+        }
+      } catch (e) {
+        console.error("프로필 불러오기 실패:", e);
+      }
+    })();
   
+    return () => { ignore = true; }; // 컴포넌트 언마운트 시 안전 가드
+  }, []);
+
+
+
   const flag = {
     width:"30px",
     height:"30px",
     verticalAlign: "middle",
     marginLeft:"80px"
   }
+  /*
   const goFriendFind = () => {
     navigate("/friendfind");
+  };*/
+  const isEmpty = (v) => !v || (typeof v === "string" && v.trim() === "");
+  const goFriendFind = () => {
+    console.log(profile)
+    const incomplete =
+      !profile ||
+      isEmpty(profile.language) ||
+      isEmpty(profile.studyLanguage) ||
+      isEmpty(profile.introduction);
+
+    if (incomplete) {
+      alert("모국어, 학습언어, 목적, 자기소개를 모두 입력해주세요.")
+      navigate("/profilesetup");
+    } else {
+      navigate("/friendfind");
+    }
   };
+
+
   const smallBoxStyle = {
     background: "#BCC9241A",
     border: "none",

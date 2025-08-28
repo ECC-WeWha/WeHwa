@@ -6,8 +6,6 @@ import GreenButton from "../components/common/GreenButton";
 import { useNavigate } from "react-router-dom";   
 
 import { api } from "../api/client";
-//살려줘 살려줘
-
 
 function ProfileSetupPage() {
     const navigate = useNavigate();
@@ -17,7 +15,18 @@ function ProfileSetupPage() {
         targetLanguage: "",
         purpose: "",
         bio: "",
+        /////
+        topik:"",
+        major:"",
+        kakao: "",
+        instagram: "",
     });
+    const isValid = !!(
+        formData.nativeLanguage &&
+        formData.targetLanguage &&
+        formData.purpose &&
+        formData.bio
+      ); // NEW
 
     const onChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -27,15 +36,43 @@ function ProfileSetupPage() {
         }));
     };
     const handleSave = async () => {
-        try {
-            const response = await api.post("/api/friend-matching/settings", formData);
-            console.log("프로필 설정 완료:", response.data);
-            navigate("/friendfind", { replace: true });
-        } catch (error) {
-            console.error("프로필 설정 실패:", error);
-            alert("프로필 설정 중 오류가 발생했습니다. 로그인 상태를 확인해주세요.");
+        // NEW: 클라이언트단 하드가드
+        if (!isValid) {
+          alert("모국어, 학습언어, 목적, 자기소개를 모두 입력해주세요.");
+          return;
         }
-    };
+
+        const koreanTopicScore =
+        formData.topik !== "" && formData.topik !== null
+            ? Number(formData.topik)
+            : undefined;
+        if (koreanTopicScore !== undefined && Number.isNaN(koreanTopicScore)) {
+        alert("한국어 토픽 점수는 숫자로 입력해주세요.");
+        return;
+    }
+
+        // 서버 요구 스키마로 페이로드 구성
+        const payload = {
+            languageName: formData.nativeLanguage,        // 예: "Thai"
+            studyLanguageName: formData.targetLanguage,   // 예: "Korean"
+            purpose: formData.purpose,                    // "Friendship" | "Language exchange"
+            introduction: formData.bio?.trim(),
+            koreanTopicScore,                             // 숫자 또는 undefined
+            major: formData.major || undefined,
+            kakaoId: formData.kakaoId || undefined,
+            instaId: formData.instaId || undefined,
+          };
+        try {
+          // CHANGED: 그대로 전송(추가 매핑 없음)
+          const response = await api.post("/api/friend-matching/settings", payload);
+          console.log("프로필 설정 완료:", response.data);
+          navigate("/friendfind", { replace: true });
+        } catch (error) {
+          console.error("프로필 설정 실패:", error);
+          alert("프로필 설정 중 오류가 발생했습니다. 로그인 상태를 확인해주세요.");
+        }
+      };
+    
     /*
     const handleSave = () => {
 
@@ -59,16 +96,16 @@ return (
                 placeholder=""
                 onChange={onChange}
                 options={[
-                { value: "1", label: "English" },
-                { value: "2",  label: "Korean" },
-                { value: "3",label: "Japanese" },
-                { value: "4", label: "Chinese" },
-                { value: "10",    label: "Thai" },
-                { value: "5",    label: "French" },
-                { value: "6",    label: "German" },
-                { value: "7",    label: "Spanish" },
-                { value: "8",    label: "Vietnamese" },
-                { value: "9",    label: "Russian" },
+                    { value: "English", label: "English" },
+                    { value: "Korean", label: "Korean" },
+                    { value: "Japanese", label: "Japanese" },
+                    { value: "Chinese", label: "Chinese" },
+                    { value: "Thai", label: "Thai" },
+                    { value: "French", label: "French" },
+                    { value: "German", label: "German" },
+                    { value: "Spanish", label: "Spanish" },
+                    { value: "Vietnamese", label: "Vietnamese" },
+                    { value: "Russian", label: "Russian" },
                 ]} />
         </div>
         <div style={{display:"flex",justifyContent: "space-between",alignItems: "center"}}>
@@ -80,16 +117,16 @@ return (
                 placeholder=""
                 onChange={onChange}
                 options={[
-                    { value: "1", label: "English" },
-                    { value: "2",  label: "Korean" },
-                    { value: "3",label: "Japanese" },
-                    { value: "4", label: "Chinese" },
-                    { value: "10",    label: "Thai" },
-                    { value: "5",    label: "French" },
-                    { value: "6",    label: "German" },
-                    { value: "7",    label: "Spanish" },
-                    { value: "8",    label: "Vietnamese" },
-                    { value: "9",    label: "Russian" },
+                    { value: "English", label: "English" },
+                    { value: "Korean", label: "Korean" },
+                    { value: "Japanese", label: "Japanese" },
+                    { value: "Chinese", label: "Chinese" },
+                    { value: "Thai", label: "Thai" },
+                    { value: "French", label: "French" },
+                    { value: "German", label: "German" },
+                    { value: "Spanish", label: "Spanish" },
+                    { value: "Vietnamese", label: "Vietnamese" },
+                    { value: "Russian", label: "Russian" },
                 ]}
                 
             />
@@ -103,8 +140,8 @@ return (
                     value={formData.purpose}
                     onChange={onChange}
                     options={[
-                        { value: "friendship", label: "친목" },
-                        { value: "language_exchange", label: "언어교류" },
+                        { value: "Friendship", label: "친목" },
+                        { value: "Language exchange", label: "언어교류" },
                     ]}
                 />
             </div>
@@ -119,9 +156,60 @@ return (
                 onChange={onChange}
             />
         </div>
+        <div style={{display:"flex",justifyContent: "space-between",alignItems: "center",marginBottom:"50px"}}>
+            <div className="label-title">한국어 토픽</div>
+            <InputBox
+                type="number"
+                name="topik"
+                value={formData.topik}
+                placeholder="토픽 점수를 입력해주세요."
+                onChange={onChange}
+            />
+        </div>
+        <div style={{display:"flex",justifyContent: "space-between",alignItems: "center",marginBottom:"50px"}}>
+            <div className="label-title">전공</div>
+            <InputBox
+                type="text"
+                name="major"
+                value={formData.major}
+                placeholder="전공을 입력해주세요."
+                onChange={onChange}
+            />
+        </div>
+        <div style={{display:"flex",justifyContent: "space-between",alignItems: "center",marginBottom:"50px"}}>
+            <div className="label-title">카카오 ID</div>
+            <InputBox
+                type="text"
+                name="kakaoId"
+                value={formData.kakaoId}
+                placeholder="카카오 ID를 입력해주세요."
+                onChange={onChange}
+            />
+        </div>
+        <div style={{display:"flex",justifyContent: "space-between",alignItems: "center",marginBottom:"50px"}}>
+            <div className="label-title">인스타 ID</div>
+            <InputBox
+                type="text"
+                name="instaId"
+                value={formData.instaId}
+                placeholder="인스타 ID를 입력해주세요."
+                onChange={onChange}
+            />
+        </div>
 
-        <GreenButton  text="저장하기" onClick={handleSave}></GreenButton>
+        <GreenButton  text="저장하기" onClick={handleSave} disabled={!isValid}></GreenButton>
     </div>
 );
 }
 export default ProfileSetupPage;
+
+/*{ value: "1", label: "English" },
+                { value: "2",  label: "Korean" },
+                { value: "3",label: "Japanese" },
+                { value: "4", label: "Chinese" },
+                { value: "10",    label: "Thai" },
+                { value: "5",    label: "French" },
+                { value: "6",    label: "German" },
+                { value: "7",    label: "Spanish" },
+                { value: "8",    label: "Vietnamese" },
+                { value: "9",    label: "Russian" },*/

@@ -6,7 +6,14 @@ import FindFriendSidebar from "../components/sidebar/friend-find-sidebar.jsx";
 const green = "#00664F";
 const border = "#E9E9E9";
 const softText = "#6B6B6B";
-const badge = "#66A395";
+
+// NEW: 파일명만 올 때 /images/ 접두어 보정
+function normalizeImg(src) { // NEW
+  if (!src) return "/images/profile.png";
+  if (/^https?:\/\//i.test(src) || src.startsWith("/")) return src;
+  return `/images/${src}`;
+}
+
 
 function RequestButton({ requested, onToggle }) {
   return (
@@ -42,28 +49,31 @@ function InfoRow({ label, value }) {
 
 export default function FriendFindDetail() {
   const { state } = useLocation();
-  const { id } = useParams();
+  const { id: routeId } = useParams();
   const navigate = useNavigate();
 
   const user = useMemo(() => {
-    if (state?.user) return state.user;
+    const raw = state?.user ?? {};
     return {
-      id,
-      name: "Heejin",
-      username: "heejin0316",
-      country: "한국",
-      langs: ["Korean", "English"],
-      interests: ["여행", "음악", "커피"],
-      purpose: "언어 교류",
-      contact: "DM",
-      bio:
-        "Hi! I’m Heejin from Korea. My native language is Korean, and I’m looking for a language exchange partner to practice English. I’d be happy to help with Korean too! If you’re interested, feel free to send me a friend request. 😊",
-      banner:
-        "linear-gradient(135deg, rgba(255,124,142,0.9), rgba(255,189,125,0.9))",
+      id: raw.userId ?? raw.senderId ?? routeId,                    // CHANGED: 아이디
+      name: raw.nickname,                                           // CHANGED: 이름
+      img: normalizeImg(raw.profileImage ?? raw.img),               // CHANGED: 이미지
+      region: raw.region,                                           // CHANGED: 국적
+      purpose: raw.purpose,                                         // CHANGED: 목적
+      langName: raw.languageName,                                   // CHANGED: 모국어
+      langs: [raw.studyLanguageName].filter(Boolean),               // CHANGED: 학습언어(단일)
+      topik: raw.topik ?? raw.koreanTopic ?? raw.koreanTopicScore ?? "",  // CHANGED: 한국어 토픽
+      major: raw.major,                                             // CHANGED: 전공
+      education: raw.studentStatus ?? raw.education ?? raw.grade ?? "", // CHANGED: 학적
+      bio: raw.introduction ?? "",                                  // CHANGED: 소개
+      friendRequested: !!raw.friendRequested,
+      // 원본도 보존(필요 시 접근)
+      ...raw,
     };
-  }, [state, id]);
+  }, [state, routeId]);
 
-  const [requested, setRequested] = useState(false);
+  const [requested, setRequested] = useState(!!user.friendRequested);       // CHANGED
+
 
   return (
     <>
@@ -95,6 +105,8 @@ export default function FriendFindDetail() {
             >
               {/* Avatar */}
               <div
+                role="img"                                 // NEW: 접근성 힌트
+                aria-label="사용자 프로필 이미지"
                 style={{
                   position: "absolute",
                   left: 40,
@@ -143,7 +155,7 @@ export default function FriendFindDetail() {
 
             {/* Bio */}
             <div style={{ padding: "0 24px 16px", color: softText, fontSize: 20, lineHeight: 1.7 }}>
-              {user.bio}
+            {user.bio || "소개가 없습니다."}
             </div>
 
             <hr style={{ border: 0, borderTop: `1px solid ${border}`, margin: "0 24px 16px" }} />
@@ -151,35 +163,19 @@ export default function FriendFindDetail() {
             {/* info list */}
             <div style={{ padding: "0 100px 24px", fontSize: 20, lineHeight:4}}>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <InfoRow label="아이디" value={user.username || "-"} />
-                <InfoRow label="국적" value={user.country || "-"} />
-                <InfoRow label="목적" value={user.purpose || "-"} />
-                <InfoRow
-                  label="모국어"
-                  value={
-                    Array.isArray(user.nativeLanguage) && user.nativeLanguage.length
-                      ? user.nativeLanguage.join(" · ")
-                      : "-"
-                  }
-                />
-                <InfoRow
-                  label="학습언어"
-                  value={
-                    Array.isArray(user.targetLanguage) && user.targetLanguage.length
-                      ? user.targetLanguage.join(", ")
-                      : "-"
-                  }
-                />
-                <InfoRow label="한국어 토픽" value={user.topik || "-"} />
-                <InfoRow label="전공" value={user.major || "-"} />
-                <InfoRow label="학적" value={user.education || "-"} />
+              <InfoRow label="아이디" value={user.id ?? "-"} />                 {/* CHANGED */}
+                <InfoRow label="국적" value={user.region || "-"} />               {/* CHANGED */}
+                <InfoRow label="목적" value={user.purpose || "-"} />              {/* CHANGED */}
+                <InfoRow label="모국어" value={user.langName || "-"} />           {/* CHANGED */}
+                <InfoRow label="학습언어" value={user.langs[0] || "-"} />         {/* CHANGED */}
+                <InfoRow label="한국어 토픽" value={user.topik || "-"} />         {/* CHANGED */}
+                <InfoRow label="전공" value={user.major || "-"} />                {/* CHANGED */}
+                <InfoRow label="학적" value={user.education || "-"} />            {/* CHANGED */}
               </div>
-
             </div>
           </section>
         </div>
       </div>
-
       <div style={{ height: 40 }} />
     </>
   );
