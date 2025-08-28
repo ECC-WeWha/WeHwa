@@ -209,31 +209,6 @@ function BoardDetail() {
                 <AccessTimeOutlinedIcon sx={{ fontSize: 18, color: '#1a1a1a' }} />
                 {post.time}
               </span>
-
-              {/* Scrap */}
-              <button
-                onClick={toggleScrap}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                  border: `1px solid ${scrapped ? secondGreen : border}`,
-                  background: scrapped ? secondGreen : "#fff",
-                  color: scrapped ? "#fff" : "#1a1a1a",
-                  padding: "6px 12px",
-                  borderRadius: 8,
-                  cursor: "pointer",
-                  fontSize: 16,
-                  fontFamily: "inherit",
-                }}
-              >
-                {scrapped ? (
-                  <BookmarkIcon sx={{ fontSize: 20, color: "#fff" }} />
-                ) : (
-                  <BookmarkBorderIcon sx={{ fontSize: 20, color: "#1a1a1a" }} />
-                )}
-                {scrapped ? "스크랩됨" : "스크랩"}
-              </button>
             </div>
 
             <div
