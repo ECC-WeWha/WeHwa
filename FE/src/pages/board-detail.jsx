@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import BoardNav from "../components/top-nav/top-nav.jsx";
 import BoardSidebar from "../components/sidebar/sidebar.jsx";
@@ -10,25 +10,33 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { api } from "../api/client.js";
-import { useAuth } from "../components/layout/AuthContext.jsx";
 
 function BoardDetail() {
   const { postId } = useParams();
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { user } = useAuth();
 
   const green = "#00664F";
+  const gray = "#A0A0A0";
   const border = "#B4B4B4";
   const secondGreen = "#66A395";
 
   const [post, setPost] = useState(state ?? null);
 
+  useEffect(() => {
+    if (!post && postId) {
+      const saved = localStorage.getItem(`post:${postId}`);
+      if (saved) {
+        setPost(JSON.parse(saved));
+        return;
+      }
+    }
+  }, [post, postId]);
+
   if (!post) {
     return (
       <div style={{ padding: 30 }}>
-        <p>포스트를 불러오는 중</p>
+        <p>포스트를 불러오는 중이에요…</p>
         <button onClick={() => navigate(-1)} style={{ padding: "8px 12px" }}>
           목록으로 가기
         </button>
@@ -41,106 +49,36 @@ function BoardDetail() {
   const [scrapped, setScrapped] = useState(false);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [commentText, setCommentText] = useState("");
-  const [comments, setComments] = useState([]);
-
-  const currentUserName =
-    user?.nickname || user?.username || user?.userId || "user";
-
-  const logErr = (err, tag) => {
-    console.error(`서버 오류(${tag})`, {
-      url: err.config?.url,
-      method: err.config?.method,
-      req: err.config?.data,
-      status: err.response?.status,
-      res: err.response?.data,
-    });
-    const msg =
-      err.response?.data?.message ||
-      err.response?.data?.error ||
-      err.message ||
-      "오류가 발생했습니다.";
-    alert(msg);
-  };
+  const [comments, setComments] = useState([
+    { id: 1, username: "user001", time: "2분 전", text: "정보 감사합니다!" },
+    { id: 2, username: "foodie22", time: "5분 전", text: "여기 꼭 가볼게요" },
+    { id: 3, username: "nalinishungry", time: "5분 전", text: "I will try!" },
+  ]);
 
   const toggleLike = () => {
     setLikeCount((c) => (liked ? c - 1 : c + 1));
     setLiked((v) => !v);
   };
 
-  const toggleScrap = () => setScrapped((v) => !v);
-
-  const handleSubmitComment = async () => {
-    if (!commentText.trim()) return;
-
-    if (!user) {
-      alert("로그인이 필요합니다.");
-      navigate(`/login?from=${encodeURIComponent(window.location.pathname + window.location.search)}`);
-      return;
-    }
-
-    const targetPostId = post?.postId ?? postId;
-    if (!targetPostId) {
-      alert("게시글 없습니다.");
-      return;
-    }
-
-    const text = commentText.trim();
-    const tempId = `temp-${Date.now()}`;
-    const optimistic = {
-      id: tempId,
-      username: isAnonymous ? "익명" : currentUserName,
-      time: "방금 전",
-      text,
-    };
-    setComments((prev) => [optimistic, ...prev]);
-    setCommentText("");
-    setIsAnonymous(false);
-
-    try {
-      const res = await api.post("/api/comments", {
-        postId: String(targetPostId),
-        content: text,
-        isAnony: isAnonymous ? "True" : "False",
-      });
-      console.log(res.data);
-
-      const data = res.data?.data ?? res.data;
-      const normalized = {
-        id: data?.loginId ?? data?.logind ?? Date.now(),
-        username: data?.author || data?.username || (isAnonymous ? "익명" : currentUserName),
-        time: data?.createdAt
-          ? new Date(data.createdAt).toLocaleString()
-          : "방금 전",
-        text: data?.content ?? text,
-      };
-
-      setComments((prev) => prev.map((c) => (c.id === tempId ? normalized : c)));
-    } catch (err) {
-      setComments((prev) => prev.filter((c) => c.id !== tempId));
-      if (err.response?.status === 401) {
-        alert("로그인이 필요합니다.");
-        navigate(`/login?from=${encodeURIComponent(window.location.pathname + window.location.search)}`);
-        return;
-      }
-      logErr(err, "댓글 등록");
-    }
+  const toggleScrap = () => {
+    setScrapped((v) => !v);
   };
 
-  const handleDeleteComment = async (id) => {
-    const prev = comments;
-    setComments((p) => p.filter((c) => c.id !== id));
-    try {
-      const res = await api.delete(`/api/comments/${id}`);
-      console.log("delete comment res", res.data);
-    } catch (err) {
-      setComments(prev);
-      if (err.response?.status === 401) {
-        alert("로그인이 필요합니다.");
-        navigate(`/login?from=${encodeURIComponent(window.location.pathname + window.location.search)}`);
-        return;
-      }
-      logErr(err, "댓글 삭제");
-    }
+  const handleSubmitComment = () => {
+    if (!commentText.trim()) return;
+    const newComment = {
+      id: Date.now(),
+      username: isAnonymous ? "익명" : "username",
+      time: "방금 전",
+      text: commentText.trim(),
+    };
+    setComments([newComment, ...comments]);
+    setCommentText("");
+    setIsAnonymous(false);
+  };
+
+  const handleDeleteComment = (id) => {
+    setComments((prev) => prev.filter((c) => c.id !== id));
   };
 
   return (
@@ -196,7 +134,12 @@ function BoardDetail() {
           </div>
 
           {/* Post */}
-          <article style={{ borderRadius: 20, padding: 30 }}>
+          <article
+            style={{
+              borderRadius: 20,
+              padding: 30,
+            }}
+          >
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <div
                 style={{
@@ -207,7 +150,7 @@ function BoardDetail() {
                 }}
               />
               <span style={{ color: "#1a1a1a", fontSize: 18 }}>
-                {post.author || post.username || post.userId}
+                {post.username}
               </span>
             </div>
 
@@ -233,6 +176,7 @@ function BoardDetail() {
                 alignItems: "center",
               }}
             >
+              {/* Like */}
               <button
                 onClick={toggleLike}
                 style={{
@@ -254,39 +198,17 @@ function BoardDetail() {
                 {likeCount}
               </button>
 
+              {/* Comments */}
               <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
                 <ChatBubbleOutlineOutlinedIcon sx={{ fontSize: 20, color: '#1a1a1a' }} />
-                {comments.length}
+                {post.comments}
               </span>
 
+              {/* Time */}
               <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
                 <AccessTimeOutlinedIcon sx={{ fontSize: 18, color: '#1a1a1a' }} />
                 {post.time}
               </span>
-
-              <button
-                onClick={toggleScrap}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                  border: `1px solid ${scrapped ? secondGreen : border}`,
-                  background: scrapped ? secondGreen : "#fff",
-                  color: scrapped ? "#fff" : "#1a1a1a",
-                  padding: "6px 12px",
-                  borderRadius: 8,
-                  cursor: "pointer",
-                  fontSize: 16,
-                  fontFamily: "inherit",
-                }}
-              >
-                {scrapped ? (
-                  <BookmarkIcon sx={{ fontSize: 20, color: "#fff" }} />
-                ) : (
-                  <BookmarkBorderIcon sx={{ fontSize: 20, color: "#1a1a1a" }} />
-                )}
-                {scrapped ? "스크랩됨" : "스크랩"}
-              </button>
             </div>
 
             <div
@@ -315,7 +237,13 @@ function BoardDetail() {
 
           {/* Comments */}
           <section style={{ marginTop: 20 }}>
-            <h3 style={{ fontSize: 18, margin: "0 0 10px", color: "#1a1a1a" }}>
+            <h3
+              style={{
+                fontSize: 18,
+                margin: "0 0 10px",
+                color: "#1a1a1a",
+              }}
+            >
               댓글
             </h3>
 
@@ -359,7 +287,15 @@ function BoardDetail() {
               </div>
             ))}
 
-            <div style={{ display: "flex", gap: 10, marginTop: 12, alignItems: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: 10,
+                marginTop: 12,
+                alignItems: "center",
+              }}
+            >
+              {/* 익명 Checkbox */}
               <FormControlLabel
                 control={
                   <Checkbox
@@ -367,7 +303,9 @@ function BoardDetail() {
                     onChange={(e) => setIsAnonymous(e.target.checked)}
                     sx={{
                       color: green,
-                      '&.Mui-checked': { color: green },
+                      '&.Mui-checked': {
+                        color: green,
+                      },
                     }}
                   />
                 }

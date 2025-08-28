@@ -8,7 +8,6 @@ function BoardSidebar() {
     { label: "게시판 홈", path: "/board" },
     { label: "글쓰기", path: "/board/write" },
     { label: "내가 쓴 글", path: "/board/mypage" },
-    { label: "스크랩", path: "/board/scrap" },
   ];
 
   const isActive = (path) => location.pathname === path;
